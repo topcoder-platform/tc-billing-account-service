@@ -20,6 +20,116 @@ securityDefinitions:
     in: header
 
 paths:
+  /clients:
+    get:
+      tags:
+        - client
+      security:
+        - Bearer: []
+      operationId: findAllClients
+      description: Retreive all clients, Admin user only.
+      responses:
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '422':
+          description: Invalid input
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '200':
+          description: A list of clients
+          schema:
+            $ref: "#/definitions/ClientListResponse"
+
+    post:
+      tags:
+        - client
+      security:
+        - Bearer: []
+      operationId: addNewClient
+      description: Create a new client, Admin user only.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewClientBodyParam'
+      responses:
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '201':
+          description: Returns the newly created billing account
+          schema:
+            $ref: "#/definitions/ClientResponse"
+        '422':
+          description: Invalid input
+          schema:
+            $ref: "#/definitions/ErrorModel"
+
+
+  /clients/{clientId}:
+    get:
+      tags:
+        - client
+      security:
+        - Bearer: []
+      description: Retrieve client by id, Admin user only.
+      responses:
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '404':
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '200':
+          description: a client
+          schema:
+            $ref: "#/definitions/ClientResponse"
+      parameters:
+        - $ref: "#/parameters/clientIdParam"
+      operationId: getClientById
+
+    patch:
+      tags:
+        - billingaccount
+      security:
+        - Bearer: []
+      operationId: updateClient
+      description: Update a client, Admin user only.
+      responses:
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '404':
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        '200':
+          description: Successfully updated client. Returns updated client
+          schema:
+            $ref: "#/definitions/ClientResponse"
+        '422':
+          description: Invalid input
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        default:
+          description: error payload
+          schema:
+            $ref: '#/definitions/ErrorModel'
+      parameters:
+        - $ref: "#/parameters/clientIdParam"
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/NewClientBodyParam"
+
   /billingaccounts:
     get:
       tags:
@@ -268,7 +378,15 @@ paths:
           in: query
           type: string
 
+
 parameters:
+  clientIdParam:
+    name: clientId
+    in: path
+    description: client identifier
+    required: true
+    type: integer
+    format: int64
   billingAcountIdParam:
     name: billingAccountId
     in: path
@@ -330,6 +448,28 @@ definitions:
           content:
             type: object
 
+  NewClient:
+    type: object
+    required:
+       - name
+       - status
+    properties:
+      name:
+        type: string
+        description: The client name
+      status:
+        type: string
+        description: the client status
+      startDate:
+        type: string
+        description: billing account start date, Datetime (GMT)
+      endDate:
+        type: string
+        description: billing account end date, Datetime (GMT)
+      codeName:
+        type: string
+        description: the client code name
+
   NewBillingAccount:
     type: object
     required:
@@ -358,11 +498,83 @@ definitions:
       param:
         $ref: "#/definitions/NewBillingAccount"
 
+  NewClientBodyParam:
+    type: object
+    properties:
+      param:
+        $ref: "#/definitions/NewClient"
+
   BillingAccountBodyParam:
     type: object
     properties:
       param:
         $ref: "#/definitions/BillingAccount"
+
+  Client:
+    type: object
+    properties:
+      id:
+        description: unique identifier
+        type: integer
+        format: int64
+      name:
+        type: string
+        description: The client name
+      status:
+        type: string
+        description: The client status
+      startDate:
+        type: string
+        description: billing account start date, Datetime (GMT)
+      endDate:
+        type: string
+        description: billing account end date, Datetime (GMT)
+      codeName:
+        type: string
+        description: The client code name
+
+  ClientResponse:
+    title: Single client
+    type: object
+    properties:
+      id:
+        type: string
+        description: unique id identifying the request
+      version:
+        type: string
+      result:
+        type: object
+        properties:
+          success:
+            type: boolean
+          status:
+            type: string
+          content:
+            $ref: "#/definitions/Client"
+
+  ClientListResponse:
+    title: List response
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+        description: unique id identifying the request
+      version:
+        type: string
+      result:
+        type: object
+        properties:
+          success:
+            type: boolean
+          status:
+            type: string
+          metadata:
+            $ref: "#/definitions/ResponseMetadata"
+          content:
+            type: array
+            items:
+              $ref: "#/definitions/Client"
 
   BillingAccount:
     type: object
@@ -390,6 +602,20 @@ definitions:
         type: number
         format: float
         description: the challenge budget for this billing account.
+      description:
+        type: string
+        description: the description for this billing account.
+      poNumber:
+        type: number
+        format: int64
+        description: the po number for this billing account.
+      paymentTerms:
+        type: string
+        description: the payment terms for this billing account.
+      subscriptionNumber:
+        type: number
+        format: float
+        description: the subscription number for this billing account.
       createdAt:
         type: string
         description: Datetime (GMT) when task was created
