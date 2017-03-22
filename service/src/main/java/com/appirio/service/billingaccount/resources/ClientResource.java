@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import com.appirio.supply.SupplyException;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.PATCH;
 
@@ -32,6 +33,8 @@ import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
 import com.appirio.tech.core.auth.AuthUser;
 import com.codahale.metrics.annotation.Timed;
+
+import java.util.Arrays;
 
 /**
  * REST resource endpoint for clients
@@ -105,8 +108,14 @@ public class ClientResource extends BaseResource {
             if (request.getParam() == null) {
                 throw new IllegalArgumentException("Should provide client param");
             }
-            return ApiResponseFactory.createResponse(clientManager.addNewClient(request.getParam(), user.getUserId()
-                    .getId()));
+            String method = request.getMethod();
+            checkMethod(method);
+            if (method != null && Arrays.asList("put", "patch").contains(method.toLowerCase())) {
+                return MetadataApiResponseFactory
+                        .createResponse(clientManager.updateClient(request.getParam().getId(), request.getParam(), user.getUserId().getId()));
+            }
+            return MetadataApiResponseFactory
+                    .createResponse(clientManager.addNewClient(request.getParam(), user.getUserId().getId()));
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
         }
