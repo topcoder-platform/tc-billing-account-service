@@ -10,3 +10,5 @@ GET clients\/
 POST clients\/
 GET clients\/.*\/
 PATCH clients\/.*\/
+POST challenge-fees\/.*\/fixed\/
+POST challenge-fees\/.*\/percentage\/

@@ -7,10 +7,13 @@ import com.appirio.service.BaseApplication;
 import com.appirio.service.billingaccount.api.BillingAccount;
 import com.appirio.service.billingaccount.api.Client;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
+import com.appirio.service.billingaccount.dao.ChallengeDAO;
 import com.appirio.service.billingaccount.dao.ClientDAO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
+import com.appirio.service.billingaccount.manager.ChallengeManager;
 import com.appirio.service.billingaccount.manager.ClientManager;
 import com.appirio.service.billingaccount.resources.BillingAccountResource;
+import com.appirio.service.billingaccount.resources.ChallengeFeeResource;
 import com.appirio.service.billingaccount.resources.ClientResource;
 import com.appirio.service.supply.resources.SupplyDatasourceFactory;
 import com.appirio.supply.DAOFactory;
@@ -30,9 +33,16 @@ import java.util.List;
  *   -- Updated registerResources() to register the ClientResource.
  *  </li>
  * </p>
+ * 
+ * <p>
+ * Changes in v1.2 ADMIN APP CHALLENGE FEE AND REVIEW MANAGEMENT API
+ *  <li>
+ *   -- Updated registerResources() to register the ChallengeFeeResource.
+ *  </li>
+ * </p>
  *
  * @author TCSCODER, TCSCODER
- * @version 1.1
+ * @version 1.2
  */
 public class BillingAccountServiceApplication extends BaseApplication<BillingAccountServiceConfiguration> {
 
@@ -86,12 +96,16 @@ public class BillingAccountServiceApplication extends BaseApplication<BillingAcc
 
     	// initialize the client manager
         ClientManager clientManager = new ClientManager(DAOFactory.getInstance().createDAO(ClientDAO.class),
-        		IdGenerator.getInstance("com.topcoder.timetracker.ClientManager"));
+                IdGenerator.getInstance("com.topcoder.timetracker.ClientManager"));
+                
+        // initialize the Challenge Manager
+        ChallengeManager challengeManager = new ChallengeManager(DAOFactory.getInstance().createDAO(ChallengeDAO.class));
         
 
         // register the resources.
         env.jersey().register(new BillingAccountResource(billingAccountManager));
         env.jersey().register(new ClientResource(clientManager));
+        env.jersey().register(new ChallengeFeeResource(challengeManager));
 
         logger.info("Services registered");
     }
