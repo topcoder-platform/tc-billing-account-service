@@ -11,6 +11,7 @@ import com.appirio.tech.core.auth.AuthUser;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 /**
  * This is the base class of all resources defined in this service. It provides a helper method to check whether the
@@ -72,6 +73,17 @@ public class BaseResource {
         if (queryParameter.getFilter().getFields().contains(END_DATE)) {
             queryParameter.getFilter().put(END_DATE,
                 formatter.parse(queryParameter.getFilter().get(END_DATE).toString()).getTime() / 1000);
+        }
+    }
+
+    /**
+     * Check if the method is valid.
+     * @param method the method
+     * @throws SupplyException if the method is not PUT, POST, or PATCH
+     */
+    protected void checkMethod(String method) throws SupplyException {
+        if (method != null && !Arrays.asList("put", "post", "patch").contains(method.toLowerCase())) {
+            throw new SupplyException("method should be either POST , PUT, PATCH", 400);
         }
     }
 }

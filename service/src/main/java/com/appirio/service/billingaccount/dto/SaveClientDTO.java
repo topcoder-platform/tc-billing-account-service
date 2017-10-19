@@ -32,6 +32,13 @@ import lombok.Setter;
 public class SaveClientDTO {
 
 	/**
+	 * The ID.
+	 */
+	@Getter
+	@Setter
+	private long id;
+
+	/**
 	 * The client name.
 	 */
 	@Getter
