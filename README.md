@@ -43,6 +43,22 @@ The configuration is done via environment variables, these can be set in 'local/
 |TIME_OLTP_URL       | The Informix URL                |
 |TC_JWT_KEY          | The JWT key                     |
 
+### Set up Local Maven repository for Appirio Maven
+
+- Since maven.appirio.net is not accessible, We need to set up a local maven repository with the zip file `temp-maven-repo-master.zip`
+
+- Unzip the contents to any of the directory in your System. **In Linux, the directory should not be a mounted directory like pen drive, hard disk, etc..**
+
+- Open `pom.xml` in `service` directory and replace the `<url>` of Local repository with `absolute path of the unzipped file`. E.g. If you have unzipped the files to `/home/user/temp-maven-repo-master`, then POM entry will look like
+
+```
+<repository>
+	<id>1_temp_appirio_maven_repo</id>
+	<name>Appirio Maven Local Repository</name>
+	<url>file:///home/user/temp-maven-repo-master</url>
+</repository>
+```
+
 ## Start Microservice
 
 In the 'service' folder of this project run:

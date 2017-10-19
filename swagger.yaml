@@ -1,24 +1,20 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  version: "1.0.1"
-  title: "Billing Account and Client API"
-# during production,should point to your server machine
+  version: 1.0.1
+  title: Billing Account and Client API
 host: api.topcoder-dev.com
-basePath: "/v3"
-# during production, should use https
+basePath: /v3
 schemes:
-- "https"
+  - https
 produces:
-- application/json
+  - application/json
 consumes:
-- application/json
-
+  - application/json
 securityDefinitions:
   Bearer:
     type: apiKey
     name: Authorization
     in: header
-
 paths:
   /clients:
     get:
@@ -29,8 +25,8 @@ paths:
       operationId: findAllClients
       description: Retreive all clients. Availble to admin user only.
       parameters:
-        - $ref: "#/parameters/offsetParam"
-        - $ref: "#/parameters/limitParam"
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/limitParam'
         - name: filter
           required: true
           type: string
@@ -48,26 +44,28 @@ paths:
           in: query
           type: string
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '422':
-          description: Invalid input
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: A list of clients
           schema:
-            $ref: "#/definitions/ClientListResponse"
-
+            $ref: '#/definitions/ClientListResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '422':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/ErrorModel'
     post:
       tags:
         - client
       security:
         - Bearer: []
       operationId: addNewClient
-      description: Create a new client or update an existed client, Admin user only. If method is POST or not set, a new client will be created. You can update an exsiting client when method is PUT or PATCH
+      description: >-
+        Create a new client or update an existed client, Admin user only. If
+        method is POST or not set, a new client will be created. You can update
+        an exsiting client when method is PUT or PATCH
       parameters:
         - in: body
           name: body
@@ -75,80 +73,76 @@ paths:
           schema:
             $ref: '#/definitions/NewClientBodyParam'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '201':
           description: Returns the newly created client
           schema:
-            $ref: "#/definitions/ClientResponse"
+            $ref: '#/definitions/ClientResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
         '422':
           description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorModel"
-
-
-  /clients/{clientId}:
+            $ref: '#/definitions/ErrorModel'
+  '/clients/{clientId}':
     get:
       tags:
         - client
       security:
         - Bearer: []
-      description: Retrieve client by id, Admin user only.
+      description: 'Retrieve client by id, Admin user only.'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '404':
-          description: Not found
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: a client
           schema:
-            $ref: "#/definitions/ClientResponse"
+            $ref: '#/definitions/ClientResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/clientIdParam"
+        - $ref: '#/parameters/clientIdParam'
       operationId: getClientById
-
     patch:
       tags:
         - client
       security:
         - Bearer: []
       operationId: updateClient
-      description: Update a client, Admin user only.
+      description: 'Update a client, Admin user only.'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '404':
-          description: Not found
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: Successfully updated client. Returns updated client
           schema:
-            $ref: "#/definitions/ClientResponse"
+            $ref: '#/definitions/ClientResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
         '422':
           description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorModel"
+            $ref: '#/definitions/ErrorModel'
         default:
           description: error payload
           schema:
             $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/clientIdParam"
+        - $ref: '#/parameters/clientIdParam'
         - name: body
           in: body
           required: true
           schema:
-            $ref: "#/definitions/NewClientBodyParam"
-
+            $ref: '#/definitions/NewClientBodyParam'
   /billing-accounts:
     get:
       tags:
@@ -156,23 +150,23 @@ paths:
       security:
         - Bearer: []
       operationId: findBillingAccounts
-      description: Retreive billing accounts that match the filter, Admin user only.
+      description: 'Retreive billing accounts that match the filter, Admin user only.'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '400':
-          description: Invalid input
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: A list of billing accounts
           schema:
-            $ref: "#/definitions/BillingAccountListResponse"
+            $ref: '#/definitions/BillingAccountListResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/offsetParam"
-        - $ref: "#/parameters/limitParam"
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/limitParam'
         - name: filter
           required: true
           type: string
@@ -189,14 +183,16 @@ paths:
             sort billing accounts by status, name, startDate, endDate
           in: query
           type: string
-
     post:
       tags:
         - billingaccount
       security:
         - Bearer: []
       operationId: addBillingAccount
-      description: Create or update a billing account, Admin user only. If method is "POST", then it will create a new account. The account will be updated when method is "PUT" or "PATCH"
+      description: >-
+        Create or update a billing account, Admin user only. If method is
+        "POST", then it will create a new account. The account will be updated
+        when method is "PUT" or "PATCH"
       parameters:
         - in: body
           name: body
@@ -204,156 +200,152 @@ paths:
           schema:
             $ref: '#/definitions/NewBillingAccountBodyParam'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '201':
           description: Returns the newly created billing account
           schema:
-            $ref: "#/definitions/BillingAccountResponse"
+            $ref: '#/definitions/BillingAccountResponse'
         '400':
           description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorModel"
-
-  /billing-accounts/{billingAccountId}:
+            $ref: '#/definitions/ErrorModel'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  '/billing-accounts/{billingAccountId}':
     get:
       tags:
         - billingaccount
       security:
         - Bearer: []
-      description: Retrieve billing account by id, Admin user only.
+      description: 'Retrieve billing account by id, Admin user only.'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '404':
-          description: Not found
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: a billing account
           schema:
-            $ref: "#/definitions/BillingAccountResponse"
+            $ref: '#/definitions/BillingAccountResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/billingAcountIdParam"
+        - $ref: '#/parameters/billingAcountIdParam'
       operationId: getBillingAccount
-
     patch:
       tags:
         - billingaccount
       security:
         - Bearer: []
       operationId: updateBillingAccount
-      description: Update a billing account, Admin user only.
+      description: 'Update a billing account, Admin user only.'
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '404':
-          description: Not found
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
-          description: Successfully updated billing account. Returns original and updated billing account object
+          description: >-
+            Successfully updated billing account. Returns original and updated
+            billing account object
           schema:
-            $ref: "#/definitions/UpdateBillingAccountResponse"
+            $ref: '#/definitions/UpdateBillingAccountResponse'
         '400':
           description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorModel"
+            $ref: '#/definitions/ErrorModel'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
         default:
           description: error payload
           schema:
             $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/billingAcountIdParam"
+        - $ref: '#/parameters/billingAcountIdParam'
         - name: body
           in: body
           required: true
           schema:
-            $ref: "#/definitions/BillingAccountBodyParam"
-
-  /billing-accounts/{billingAccountId}/users:
+            $ref: '#/definitions/BillingAccountBodyParam'
+  '/billing-accounts/{billingAccountId}/users':
     get:
       tags:
         - billingaccount
       security:
         - Bearer: []
-      description: Retrieve users of billing account, Admin user only.
+      description: 'Retrieve users of billing account, Admin user only.'
       operationId: getBillingAccountUsers
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '404':
-          description: Not found
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: users of billing account
           schema:
-            $ref: "#/definitions/BillingAccountUserListResponse"
+            $ref: '#/definitions/BillingAccountUserListResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/billingAcountIdParam"
-        - $ref: "#/parameters/offsetParam"
-        - $ref: "#/parameters/limitParam"
-
+        - $ref: '#/parameters/billingAcountIdParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/limitParam'
     post:
       tags:
         - billingaccount
       security:
         - Bearer: []
-      description: Assign user to billing account, Admin user only.
+      description: 'Assign user to billing account, Admin user only.'
       operationId: assignUserToBillingAccount
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '404':
-          description: Not found
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: a billing account
           schema:
-            $ref: "#/definitions/BillingAccountResponse"
+            $ref: '#/definitions/BillingAccountResponse'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/billingAcountIdParam"
+        - $ref: '#/parameters/billingAcountIdParam'
         - in: body
           name: body
           required: true
           schema:
-            $ref: "#/definitions/AddAccountUserRequest"
-
-  /billing-accounts/{billingAccountId}/users/{userId}:
+            $ref: '#/definitions/AddAccountUserRequest'
+  '/billing-accounts/{billingAccountId}/users/{userId}':
     delete:
       tags:
         - billingaccount
       security:
         - Bearer: []
-      description: Remove user from billing account, Admin user only.
+      description: 'Remove user from billing account, Admin user only.'
       operationId: removeUserFromBillingAccount
       responses:
+        '204':
+          description: successful operation
         '403':
           description: No permission or wrong token
           schema:
-            $ref: "#/definitions/ErrorModel"
+            $ref: '#/definitions/ErrorModel'
         '404':
           description: Not found
           schema:
-            $ref: "#/definitions/ErrorModel"
-        '204':
-          description: successful operation
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/billingAcountIdParam"
-        - $ref: "#/parameters/userIdParam"
-
+        - $ref: '#/parameters/billingAcountIdParam'
+        - $ref: '#/parameters/userIdParam'
   /me/billing-accounts:
     get:
       tags:
@@ -361,23 +353,25 @@ paths:
       security:
         - Bearer: []
       operationId: findBillingAccountsByUser
-      description: Retreive billing accounts that match the filter, For admin and non-admin user.
+      description: >-
+        Retreive billing accounts that match the filter, For admin and non-admin
+        user.
       responses:
-        '403':
-          description: No permission or wrong token
-          schema:
-            $ref: "#/definitions/ErrorModel"
-        '400':
-          description: Invalid input
-          schema:
-            $ref: "#/definitions/ErrorModel"
         '200':
           description: A list of billing accounts
           schema:
-            $ref: "#/definitions/BillingAccountListResponse"
+            $ref: '#/definitions/BillingAccountListResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
       parameters:
-        - $ref: "#/parameters/offsetParam"
-        - $ref: "#/parameters/limitParam"
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/limitParam'
         - name: filter
           required: true
           type: string
@@ -394,9 +388,86 @@ paths:
             sort billing accounts by name, status, startDate, endDate
           in: query
           type: string
-
-
+  '/challenge-fees/{challengeId}/fixed':
+    post:
+      tags:
+        - challenge-fees
+      security:
+        - Bearer: []
+      description: Update the challenge fixed fee
+      responses:
+        '200':
+          description: success response
+          schema:
+            $ref: '#/definitions/SuccessResponseWithId'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+      parameters:
+        - $ref: '#/parameters/challengeIdParam'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateFeeValueBody'
+      operationId: updateFixedChallengeFee
+  '/challenge-fees/{challengeId}/percentage':
+    post:
+      tags:
+        - challenge-fees
+      security:
+        - Bearer: []
+      description: Update the challenge percentage fee
+      responses:
+        '200':
+          description: success response
+          schema:
+            $ref: '#/definitions/SuccessResponseWithId'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '403':
+          description: No permission or wrong token
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+      parameters:
+        - $ref: '#/parameters/challengeIdParam'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateFeeValueBody'
+      operationId: updatePercentageChallengeFee
 parameters:
+  challengeIdParam:
+    name: challengeId
+    in: path
+    description: challenge identifier
+    required: true
+    type: integer
+    format: int64
   clientIdParam:
     name: clientId
     in: path
@@ -420,20 +491,73 @@ parameters:
     format: int64
   offsetParam:
     name: offset
-    description: "number of items to skip. Defaults to 0"
+    description: number of items to skip. Defaults to 0
     in: query
     required: false
     type: integer
     format: int32
   limitParam:
     name: limit
-    description: "max records to return. Defaults to 10"
+    description: max records to return. Defaults to 10
     in: query
     required: false
     type: integer
     format: int32
-
 definitions:
+  SuccessResponseWithId:
+    title: success response which returns the id as content
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+        description: unique id identifying the request
+      version:
+        type: string
+      result:
+        type: object
+        properties:
+          success:
+            type: boolean
+          status:
+            type: string
+            description: http status code
+          content:
+            type: integer
+            format: int64
+  UpdateFeeValueBody:
+    type: object
+    properties:
+      param:
+        $ref: '#/definitions/FeeValuePayload'
+  FeeValuePayload:
+    title: The fee value payload
+    type: object
+    properties:
+      value:
+        type: number
+        description: The fee value
+  GenericSuccessResponse:
+    title: generic success response
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+        description: unique id identifying the request
+      version:
+        type: string
+      result:
+        type: object
+        properties:
+          success:
+            type: boolean
+          status:
+            type: string
+            description: http status code
+          content:
+            type: string
+            description: success message
   ResponseMetadata:
     title: Metadata object for a response
     type: object
@@ -442,7 +566,6 @@ definitions:
         type: integer
         format: int64
         description: Total count of the objects
-
   ErrorModel:
     type: object
     properties:
@@ -464,12 +587,11 @@ definitions:
             type: object
           content:
             type: object
-
   NewClient:
     type: object
     required:
-       - name
-       - status
+      - name
+      - status
     properties:
       name:
         type: string
@@ -479,27 +601,28 @@ definitions:
         description: the client status (ACTIVE or INACTIVE)
       startDate:
         type: string
-        description: billing account start date, Datetime (GMT)
+        description: 'billing account start date, Datetime (GMT)'
       endDate:
         type: string
-        description: billing account end date, Datetime (GMT)
+        description: 'billing account end date, Datetime (GMT)'
       codeName:
         type: string
         description: the client code name (optional)
       customerNumber:
         type: string
-        description: the client customer number. This is an external reference code (optional)
-
+        description: >-
+          the client customer number. This is an external reference code
+          (optional)
   NewBillingAccount:
     type: object
     required:
-       - name
-       - companyId
-       - clientId
+      - name
+      - companyId
+      - clientId
     properties:
       name:
         type: string
-        description: billing account name (up to 64 characters)      
+        description: billing account name (up to 64 characters)
       description:
         type: string
         description: billing account description (up to 255 characters)
@@ -508,10 +631,10 @@ definitions:
         description: BillingAccount status (ACTIVE or INACTIVE)
       startDate:
         type: string
-        description: billing account start date, Datetime (GMT)
+        description: 'billing account start date, Datetime (GMT)'
       endDate:
         type: string
-        description: billing account end date, Datetime (GMT)
+        description: 'billing account end date, Datetime (GMT)'
       companyId:
         type: number
         description: The company id. This will always be set to 1.
@@ -528,7 +651,7 @@ definitions:
         type: string
         description: The PO number as defined by finance.
       paymentTerms:
-        $ref: "#/definitions/PaymentTerms"
+        $ref: '#/definitions/PaymentTerms'
       salesTax:
         type: number
         description: The billing account sales tax.
@@ -537,42 +660,39 @@ definitions:
         description: The billing account budget amount.
       billable:
         type: boolean
-        description: The flag indicating whether this account is billable. If unset it will be set to false.
-          
+        description: >-
+          The flag indicating whether this account is billable. If unset it will
+          be set to false.
   PaymentTerms:
-   type: object
-   properties:
-    id:
-     type: number
-     description: The payment terms id.
-    description:
-     type: string
-     description : The payment terms description.
-  
+    type: object
+    properties:
+      id:
+        type: number
+        description: The payment terms id.
+      description:
+        type: string
+        description: The payment terms description.
   NewBillingAccountBodyParam:
     type: object
     properties:
       param:
-        $ref: "#/definitions/NewBillingAccount"
+        $ref: '#/definitions/NewBillingAccount'
       method:
         type: string
-        description: should be POST, PUT, or PATCH
-
+        description: 'should be POST, PUT, or PATCH'
   NewClientBodyParam:
     type: object
     properties:
       param:
-        $ref: "#/definitions/NewClient"
+        $ref: '#/definitions/NewClient'
       method:
         type: string
-        description: Should be POST, PUT, or PATCH
-
+        description: 'Should be POST, PUT, or PATCH'
   BillingAccountBodyParam:
     type: object
     properties:
       param:
-        $ref: "#/definitions/BillingAccount"
-
+        $ref: '#/definitions/BillingAccount'
   Client:
     type: object
     properties:
@@ -588,17 +708,16 @@ definitions:
         description: The client status
       startDate:
         type: string
-        description: billing account start date, Datetime (GMT)
+        description: 'billing account start date, Datetime (GMT)'
       endDate:
         type: string
-        description: billing account end date, Datetime (GMT)
+        description: 'billing account end date, Datetime (GMT)'
       codeName:
         type: string
         description: The client code name
       customerNumber:
         type: string
         description: The client customer number
-
   ClientResponse:
     title: Single client
     type: object
@@ -616,8 +735,7 @@ definitions:
           status:
             type: string
           content:
-            $ref: "#/definitions/Client"
-
+            $ref: '#/definitions/Client'
   ClientListResponse:
     title: List response
     type: object
@@ -636,19 +754,18 @@ definitions:
           status:
             type: string
           metadata:
-            $ref: "#/definitions/ResponseMetadata"
+            $ref: '#/definitions/ResponseMetadata'
           content:
             type: array
             items:
-              $ref: "#/definitions/Client"
-
+              $ref: '#/definitions/Client'
   BillingAccount:
     type: object
     properties:
       id:
         description: unique identifier
         type: integer
-        format: int64      
+        format: int64
       name:
         type: string
         description: billing account name
@@ -657,10 +774,10 @@ definitions:
         description: billing account status
       startDate:
         type: string
-        description: billing account start date, Datetime (GMT)
+        description: 'billing account start date, Datetime (GMT)'
       endDate:
         type: string
-        description: billing account end date, Datetime (GMT)
+        description: 'billing account end date, Datetime (GMT)'
       budgetAmount:
         type: number
         format: float
@@ -687,7 +804,7 @@ definitions:
         description: The manual prize setting
       clientId:
         type: number
-        description: The client id  
+        description: The client id
       billable:
         type: boolean
         description: the flag indicating the account is billable.
@@ -709,8 +826,6 @@ definitions:
         format: int64
         description: READ-ONLY. User that last updated this task
         readOnly: true
-      
-
   BillingAccountUser:
     type: object
     properties:
@@ -724,7 +839,6 @@ definitions:
       description:
         type: string
         description: BillingAccount description
-
   BillingAccountResponse:
     title: Single billing account object
     type: object
@@ -742,8 +856,7 @@ definitions:
           status:
             type: string
           content:
-            $ref: "#/definitions/BillingAccount"
-
+            $ref: '#/definitions/BillingAccount'
   UpdateBillingAccountResponse:
     title: response with original and updated billing account object
     type: object
@@ -765,10 +878,9 @@ definitions:
             type: object
             properties:
               original:
-                $ref: "#/definitions/BillingAccount"
+                $ref: '#/definitions/BillingAccount'
               updated:
-                 $ref: "#/definitions/BillingAccount"
-
+                $ref: '#/definitions/BillingAccount'
   BillingAccountListResponse:
     title: List response
     type: object
@@ -787,18 +899,17 @@ definitions:
           status:
             type: string
           metadata:
-            $ref: "#/definitions/ResponseMetadata"
+            $ref: '#/definitions/ResponseMetadata'
           content:
             type: array
             items:
-              $ref: "#/definitions/BillingAccount"
+              $ref: '#/definitions/BillingAccount'
   AddAccountUserRequest:
     title: The request to add a user to an account.
     type: object
     properties:
       userId:
         type: integer
-
   BillingAccountUserListResponse:
     title: List response
     type: object
@@ -817,8 +928,8 @@ definitions:
           status:
             type: string
           metadata:
-            $ref: "#/definitions/ResponseMetadata"
+            $ref: '#/definitions/ResponseMetadata'
           content:
             type: array
             items:
-              $ref: "#/definitions/BillingAccountUser"
+              $ref: '#/definitions/BillingAccountUser'

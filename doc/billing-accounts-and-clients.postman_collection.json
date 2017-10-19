@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "billing-accounts-and-clients",
-		"_postman_id": "87940531-9e56-6fa0-dfc5-51178598e22f",
+		"_postman_id": "7737527d-7679-4c5b-1b79-d7bb637dff7c",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -14,7 +14,35 @@
 				{
 					"name": "Search Billing Accounts By Date",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=endDate%3D2020-05-19T09%3A00Z",
+						"url": {
+							"raw": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=endDate%3D2020-05-19T09%3A00Z",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"billing-accounts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "endDate"
+								},
+								{
+									"key": "filter",
+									"value": "endDate%3D2020-05-19T09%3A00Z"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -39,7 +67,35 @@
 				{
 					"name": "Search Billing Accounts By User",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=user%3Dheffan",
+						"url": {
+							"raw": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=user%3Dheffan",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"billing-accounts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "endDate"
+								},
+								{
+									"key": "filter",
+									"value": "user%3Dheffan"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -64,7 +120,31 @@
 				{
 					"name": "Get Active Billing Accounts [status = 1]",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts?sort=status&limit=30&filter=status%3D1",
+						"url": {
+							"raw": "{{apiUrl}}/v3/billing-accounts?sort=status&limit=30&filter=status%3D1",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"billing-accounts"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "status"
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "filter",
+									"value": "status%3D1"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -114,7 +194,31 @@
 				{
 					"name": "Get Inactive Billing Accounts [status =0]",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts?sort=status&limit=30&filter=status%3D0",
+						"url": {
+							"raw": "{{apiUrl}}/v3/billing-accounts?sort=status&limit=30&filter=status%3D0",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"billing-accounts"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "status"
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "filter",
+									"value": "status%3D0"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -314,7 +418,36 @@
 				{
 					"name": "Search My Billing Accounts By Status ( 1 = Active)",
 					"request": {
-						"url": "{{apiUrl}}/v3/me/billing-accounts?limit=10&offset=0&sort=endDate&filter=status%3D1",
+						"url": {
+							"raw": "{{apiUrl}}/v3/me/billing-accounts?limit=10&offset=0&sort=endDate&filter=status%3D1",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"me",
+								"billing-accounts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "endDate"
+								},
+								{
+									"key": "filter",
+									"value": "status%3D1"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -339,7 +472,35 @@
 				{
 					"name": "Search Billing Accounts No Access",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=endDate%3D2016-05-19T09%3A00Z-04",
+						"url": {
+							"raw": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=endDate%3D2016-05-19T09%3A00Z-04",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"billing-accounts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "endDate"
+								},
+								{
+									"key": "filter",
+									"value": "endDate%3D2016-05-19T09%3A00Z-04"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -364,7 +525,29 @@
 				{
 					"name": "Get Billing Account Users with Pagination",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/3/users?limit=1&offset=1",
+						"url": {
+							"raw": "{{apiUrl}}/v3/billing-accounts/3/users?limit=1&offset=1",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"billing-accounts",
+								"3",
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -520,7 +703,31 @@
 				{
 					"name": "Get All Clients with Limit and Offset",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients?limit=1&offset=1&sort=endDate",
+						"url": {
+							"raw": "{{apiUrl}}/v3/clients?limit=1&offset=1&sort=endDate",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"clients"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								},
+								{
+									"key": "sort",
+									"value": "endDate"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -545,7 +752,23 @@
 				{
 					"name": "Filter Clients by Status",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients?filter=status%3D1",
+						"url": {
+							"raw": "{{apiUrl}}/v3/clients?filter=status%3D1",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"clients"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "status%3D1"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -570,7 +793,23 @@
 				{
 					"name": "Filter Clients by Name",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients?filter=name%3DAC",
+						"url": {
+							"raw": "{{apiUrl}}/v3/clients?filter=name%3DAC",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"clients"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "name%3DAC"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -595,7 +834,23 @@
 				{
 					"name": "Filter Clients by Date",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients?filter=endDate%3D2015-05-19T09%3A00Z",
+						"url": {
+							"raw": "{{apiUrl}}/v3/clients?filter=endDate%3D2015-05-19T09%3A00Z",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"v3",
+								"clients"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "endDate%3D2015-05-19T09%3A00Z"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -616,6 +871,266 @@
 						"description": ""
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "Challenge Fee",
+			"description": "",
+			"item": [
+				{
+					"name": "Fixed Fee",
+					"description": "",
+					"item": [
+						{
+							"name": "Admin - Update Challenge Fixed Fee",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/fixed",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 142\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Admin - Update Challenge Fixed Fee - 400",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/fixed",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": \n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Non Admin - Update Challenge Fixed Fee",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/fixed",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{no-admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 142\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Anonymous - Update Challenge Fixed Fee - 401",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/fixed",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 142\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Admin - Update Challenge Fixed Fee - Not Found",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/75125/fixed",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 142\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Percentage Fee",
+					"description": "",
+					"item": [
+						{
+							"name": "Admin - Update Challenge Percentage Fee",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/percentage",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 0.7\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Admin - Update Challenge Percentage Fee - 400",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/percentage",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": -12\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Non Admin - Update Challenge Percentage Fee",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/percentage",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{no-admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 7\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Anonymous - Update Challenge Percentage - 401",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/30005520/percentage",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 7\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "Admin - Update Challenge Percentage Not Found",
+							"request": {
+								"url": "{{apiUrl}}/v3/challenge-fees/4526/percentage",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"param\" : {\n\t\t\"value\": 7\n\t}\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
 				}
 			]
 		}
