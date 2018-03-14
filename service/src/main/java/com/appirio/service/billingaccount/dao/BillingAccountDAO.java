@@ -42,9 +42,14 @@ import java.util.List;
  *  Changes in v 1.3 Topcoder - Create Challenge Fee Management APIs For Billing Accounts v1.0
  *  -- add methods for create/update/get challenge fees and percentage
  * </p>
+ * 
+ * <p>
+ * Version 1.4 - Quick 48hours! Topcoder - Update Logic For Challenge Fees Managment v1.0
+ * - For createChallengeFeePercentage and updateChallengeFeePercentage methods, change the type of challengeFeePercentage from double to Double
+ * </p>
  *
  * @author TCSCODER
- * @version 1.3
+ * @version 1.4 
  */
 @DatasourceName("oltp")
 public interface BillingAccountDAO {
@@ -334,7 +339,7 @@ public interface BillingAccountDAO {
     @SqlUpdateFile("sql/billing-account/challenge-fees/create-challenge-fee-percentage.sql")
     void createChallengeFeePercentage(
             @Bind("id") long id, @Bind("projectId") long projectId, @Bind("challengeFeePercentage")
-            double challengeFeePercentage, @Bind("active") boolean active, @Bind("userId") long userId);
+            Double challengeFeePercentage, @Bind("active") boolean active, @Bind("userId") long userId);
     
     /**
      * Get challenge fee percentage 
@@ -356,7 +361,7 @@ public interface BillingAccountDAO {
      */
     @SqlUpdateFile("sql/billing-account/challenge-fees/update-challenge-fee-percentage.sql")
     void updateChallengeFeePercentage(
-            @Bind("id") long id, @Bind("projectId") long projectId, @Bind("challengeFeePercentage") double challengeFeePercentage, 
+            @Bind("id") long id, @Bind("projectId") long projectId, @Bind("challengeFeePercentage") Double challengeFeePercentage, 
             @Bind("active") boolean active, @Bind("userId") long userId);
     
     /**

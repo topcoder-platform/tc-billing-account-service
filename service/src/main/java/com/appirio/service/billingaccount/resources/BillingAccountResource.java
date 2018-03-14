@@ -7,7 +7,6 @@ import com.appirio.service.billingaccount.api.BillingAccount;
 import com.appirio.service.billingaccount.api.BillingAccountFees;
 import com.appirio.service.billingaccount.api.BillingAccountUpdatedDTO;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
-import com.appirio.service.billingaccount.api.ChallengeFee;
 import com.appirio.service.billingaccount.api.UserIdDTO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
 import com.appirio.service.supply.resources.MetadataApiResponseFactory;

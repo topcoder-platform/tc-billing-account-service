@@ -432,7 +432,7 @@ paths:
       security:
         - Bearer: []
       operationId: createBillingAccountFees
-      description: Create billing account fees, Admin user only.
+      description: Create billing account fees, Admin user only. Please check the document of BillingAccountChallengeFees entity definition about how to prepare the ChallengeFeesBodyParam
       responses:
         '200':
           description: Return the created challenge fees
@@ -472,7 +472,7 @@ paths:
       security:
         - Bearer: []
       operationId: updateBillingAccountFees
-      description: Update billing account fees, Admin user only.
+      description: Update billing account fees, Admin user only. Please check the document of BillingAccountChallengeFees entity definition about how to prepare the ChallengeFeesBodyParam
       responses:
         '200':
           description: Return the updated challenge fees
@@ -971,11 +971,17 @@ definitions:
     type: object
     properties:
       challengeFeeFixed:
+        description: >-
+          If it's true, the challengeFeePercentage field should not be present, but the challengeFees field should be present. 
+          If it's false, the challengeFeePercentage field should be present and the challengeFees field should not be present.
         type: boolean
       challengeFeePercentage:
+        description: >-
+          This field should be present only if the challengeFeeFixed field is false.
         type: number
         format: double
       challengeFees:
+        description: This field should be present only if the challengeFeeFixed is set to true
         type: array
         items:
           type: object
