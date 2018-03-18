@@ -18,8 +18,13 @@ import lombok.Setter;
  * It's added in Topcoder - Create Challenge Fee Management APIs For Billing Accounts v1.0
  * </p>
  * 
+ * <p>
+ * Version 1.1 - Quick 48hours! Topcoder - Update Logic For Challenge Fees Managment v1.0
+ * - change challengeFeePercentage from double to Double
+ * </p>
+ * 
  * @author TCCoder
- * @version 1.0
+ * @version 1.1 
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -49,7 +54,7 @@ public class ChallengeFeePercentage extends BaseModel {
      */
     @Getter
     @Setter
-    private double challengeFeePercentage;
+    private Double challengeFeePercentage;
 
     /**
      * <p>

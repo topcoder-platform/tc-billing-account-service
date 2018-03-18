@@ -1,267 +1,431 @@
 {
-	"variables": [],
 	"info": {
 		"name": "billing-accounts-and-clients",
-		"_postman_id": "991a3743-c1b1-ce42-938b-b79629ef4e78",
-		"description": "",
+		"_postman_id": "40a07965-4ba4-8983-a0af-aaea5e495e5c",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Billing Accounts",
-			"description": "",
 			"item": [
 				{
 					"name": "challenge-fees",
-					"description": "",
 					"item": [
 						{
 							"name": "Create challenge fees challengeFixed=true",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees",
 								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Create challenge fees challengeFixed=false",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees",
 								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":false,\n    \t\"challengeFeePercentage\": 1.1\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000021/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Create challenge fees challengeFixed=true and fee percentage provided",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Create challenge fees challengeFixed=true and challenge fees missed",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 0\n    \t\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Create challenge fees challengeFixed=false and challenge fees provided",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":false,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Create challenge fees challengeFixed=false and fee percentage is not provided",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":false\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000010/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Create challenge fees  empty challenge fees",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000081/fees",
 								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": []\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": []\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000081/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Create challenge fees billing account not exists",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/9999999999/fees",
 								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/9999999999/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Create challenge fees not admin role",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000081/fees",
 								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{no-admin-token}}",
-										"description": ""
+										"value": "{{no-admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000081/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Update challenge fees",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees",
 								"method": "PUT",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"id\": 2015,\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxxyyy\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2016,\n\t    \t\t\"challengeFee\": 700,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the new name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"id\": 5006,\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxxyyy\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 5007,\n\t    \t\t\"challengeFee\": 700,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the new name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Update challenge fees (change fixed fee)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\": false,\n    \t\"challengeFeePercentage\": 10\n    \t\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Update challenge fees challengeFixed=true and fee percentage provided",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Update challenge fees challengeFixed=true and challenge fees missed",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 0\n    \t\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Update challenge fees challengeFixed=false and challenge fees provided",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":false,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 600,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
+							},
+							"response": []
+						},
+						{
+							"name": "Update challenge fees challengeFixed=false and fee percentage is not provided",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin-token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":false\n    }, \n    \"method\": \"POST\"\n}"
+								},
+								"url": "{{apiUrl}}/v3/billing-accounts/80000010/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Update challenge fees billing account does not exist",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/999999999/fees",
 								"method": "PUT",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"id\": 2015,\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2016,\n\t    \t\t\"challengeFee\": 700,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2017,\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"id\": 2015,\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2016,\n\t    \t\t\"challengeFee\": 700,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2017,\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/999999999/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Update challenge fees - some fee does not exist",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000081/fees",
 								"method": "PUT",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFeePercentage\": 1.1,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"id\": 2015,\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2016,\n\t    \t\t\"challengeFee\": 700,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2017,\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
+									"raw": "{\n    \"param\": {\n    \t\"challengeFeeFixed\":true,\n    \t\"challengeFees\": [\n\t    \t{\n\t    \t\t\"id\": 2015,\n\t    \t\t\"challengeFee\": 500,\n\t    \t\t\"challengeTypeId\": 39,\n\t    \t\t\"name\": \"Code xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2016,\n\t    \t\t\"challengeFee\": 700,\n\t    \t\t\"challengeTypeId\": 40,\n\t    \t\t\"name\": \"Design F2F xxx\"\n\t    \t},\n\t    \t{\n\t    \t\t\"id\": 2017,\n\t    \t\t\"challengeFee\": 800,\n\t    \t\t\"challengeTypeId\": 1,\n\t    \t\t\"name\": \"the other challenge name\"\n\t    \t}\n    \t]\n    }, \n    \"method\": \"POST\"\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Get challenge fees",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/80000015/fees",
 								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/80000020/fees"
 							},
 							"response": []
 						},
 						{
 							"name": "Get challenge fees billing account does not exists",
 							"request": {
-								"url": "{{apiUrl}}/v3/billing-accounts/999999999/fees",
 								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{admin-token}}",
-										"description": ""
+										"value": "{{admin-token}}"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
 								},
-								"description": ""
+								"url": "{{apiUrl}}/v3/billing-accounts/999999999/fees"
 							},
 							"response": []
 						}
@@ -271,6 +435,21 @@
 				{
 					"name": "Search Billing Accounts By Date",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=endDate%3D2020-05-19T09%3A00Z",
 							"host": [
@@ -297,33 +476,29 @@
 									"key": "filter",
 									"value": "endDate%3D2020-05-19T09%3A00Z"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Search Billing Accounts By User",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=user%3Dheffan",
 							"host": [
@@ -350,33 +525,29 @@
 									"key": "filter",
 									"value": "user%3Dheffan"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Get Active Billing Accounts [status = 1]",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/billing-accounts?sort=status&limit=30&filter=status%3D1",
 							"host": [
@@ -399,58 +570,51 @@
 									"key": "filter",
 									"value": "status%3D1"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Update Billing Account",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/2",
 						"method": "PATCH",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"param\": {\n\t\t\"salesTax\": 1.6,\n\t\t\"name\": \"New billing account2\",\n\t\t\"poNumber\": \"New POOO\",\n\t\t\"paymentTerms\": {\n\t\t  \"id\": 1,\n\t\t  \"description\": \"test\"\n\t\t},\n\t\t\"status\": \"Active\",\n\t\t\"startDate\": \"2017-04-01T09:00Z\",\n\t\t\"endDate\": \"2017-05-20T09:00Z\",\n\t\t\"description\": \"The billing account description\",\n\t\t\"companyId\":1,\n\t\t\"clientId\": 1,\n\t\t\"subscriptionNumber\":25,\n\t\t\"manualPrizeSetting\":1\n\t}\n}\n"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts/2"
 					},
 					"response": []
 				},
 				{
 					"name": "Get Inactive Billing Accounts [status =0]",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/billing-accounts?sort=status&limit=30&filter=status%3D0",
 							"host": [
@@ -473,208 +637,183 @@
 									"key": "filter",
 									"value": "status%3D0"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Get Billing Accounts By Id",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/2",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts/2"
 					},
 					"response": []
 				},
 				{
 					"name": "Create Billing Account",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"param\":{\n\t\"salesTax\": 1.6,\n\t\"name\": \"New billing account2\",\n\t\"poNumber\": \"New POOO\",\n\t\"paymentTerms\": {\n\t  \"id\": 1,\n\t  \"description\": \"test\"\n\t},\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z\",\n\t\"endDate\": \"2017-05-20T09:00Z\",\n\t\"description\": \"The billing account description\",\n\t\"companyId\":1,\n\t\"clientId\": 1,\n\t\"subscriptionNumber\":25,\n\t\"manualPrizeSetting\":1\n}, \n    \"method\": \"POST\"\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts"
 					},
 					"response": []
 				},
 				{
 					"name": "Update Billing Account",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"param\":{\n    \"id\": 21,\n\t\"salesTax\": 1.6,\n\t\"name\": \"New billing account2\",\n\t\"poNumber\": \"New POOO\",\n\t\"paymentTerms\": {\n\t  \"id\": 1,\n\t  \"description\": \"test\"\n\t},\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z\",\n\t\"endDate\": \"2017-05-20T09:00Z\",\n\t\"description\": \"The billing account description\",\n\t\"companyId\":1,\n\t\"clientId\": 1,\n\t\"subscriptionNumber\":250,\n\t\"manualPrizeSetting\":1\n}, \n    \"method\": \"PUT\"\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts"
 					},
 					"response": []
 				},
 				{
 					"name": "Get Billing Account Users",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/3/users",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts/3/users"
 					},
 					"response": []
 				},
 				{
 					"name": "Add User [handle = 'Yoshi' ] to Billing Account",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/3/users",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"param\": {\n\t    \"userId\": 124916\t\n\t}\n\t\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts/3/users"
 					},
 					"response": []
 				},
 				{
 					"name": "Add User [handle = 'wyzmo' ] to Billing Account",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/3/users",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"param\": {\n\t\t\"userId\": 124856\n\t}\n\t\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts/3/users"
 					},
 					"response": []
 				},
 				{
 					"name": "Remove User From Billing Account",
 					"request": {
-						"url": "{{apiUrl}}/v3/billing-accounts/3/users/124856",
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/billing-accounts/3/users/124856"
 					},
 					"response": []
 				},
 				{
 					"name": "Search My Billing Accounts By Status ( 1 = Active)",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/me/billing-accounts?limit=10&offset=0&sort=endDate&filter=status%3D1",
 							"host": [
@@ -702,33 +841,29 @@
 									"key": "filter",
 									"value": "status%3D1"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Search Billing Accounts No Access",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{no-admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/billing-accounts?limit=10&offset=0&sort=endDate&filter=endDate%3D2016-05-19T09%3A00Z-04",
 							"host": [
@@ -755,27 +890,8 @@
 									"key": "filter",
 									"value": "endDate%3D2016-05-19T09%3A00Z-04"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{no-admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 30005540,\n\t\"customerNumber\": \"1\",\n\t\"name\": \"rest test\",\n\t\"status\": \"Active\",\n\t\"startDate\": \"2017-04-01T09:00Z-04\",\n\t\"endDate\": \"2017-05-20T09:00Z-04\",\n\t\"amount\": 12345\n}"
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				}
@@ -783,136 +899,135 @@
 		},
 		{
 			"name": "Clients",
-			"description": "",
 			"item": [
 				{
 					"name": "Get All Clients",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients/",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/clients/"
 					},
 					"response": []
 				},
 				{
 					"name": "Create new Client",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients/",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"param\" : {\n\t\t\"name\":\"Test Client5\",\n\t\t\"status\":\"Active\",\n\t\t\"startDate\": \"2017-02-12T09:00Z\",\n\t\t\"endDate\": \"2017-05-20T09:00Z\",\n\t\t\"codeName\": \"CodeName 1\",\n\t\t\"customerNumber\": \"number\"\n\t},\n\t\"method\" : \"POST\"\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/clients/"
 					},
 					"response": []
 				},
 				{
 					"name": "Update Client",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients/",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"param\" : {\n\t\t\"id\" : 1,\n\t\t\"name\":\"Test Client5\",\n\t\t\"status\":\"Active\",\n\t\t\"startDate\": \"2017-02-12T09:00Z\",\n\t\t\"endDate\": \"2017-05-20T09:00Z\",\n\t\t\"codeName\": \"CodeName 1\",\n\t\t\"customerNumber\": \"number\"\n\t},\n\t\"method\" : \"PUT\"\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/clients/"
 					},
 					"response": []
 				},
 				{
 					"name": "Get client By Id",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients/1",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/clients/1"
 					},
 					"response": []
 				},
 				{
 					"name": "Update Client",
 					"request": {
-						"url": "{{apiUrl}}/v3/clients/1",
 						"method": "PATCH",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
+								"value": "{{admin-token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"param\" : {\n\t\t\"name\":\"Update client #s2\",\n\t\t\"status\":\"Inactive\",\n\t\t\"startDate\": \"2017-02-14T09:00Z\",\n\t\t\"endDate\": \"2017-05-21T09:00Z\",\n\t\t\"codeName\": \"CodeName 4\"\n\t}\n}"
 						},
-						"description": ""
+						"url": "{{apiUrl}}/v3/clients/1"
 					},
 					"response": []
 				},
 				{
 					"name": "Get All Clients with Limit and Offset",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/clients?limit=1&offset=1&sort=endDate",
 							"host": [
@@ -935,33 +1050,29 @@
 									"key": "sort",
 									"value": "endDate"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Filter Clients by Status",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/clients?filter=status%3D1",
 							"host": [
@@ -976,33 +1087,29 @@
 									"key": "filter",
 									"value": "status%3D1"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Filter Clients by Name",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/clients?filter=name%3DAC",
 							"host": [
@@ -1017,33 +1124,29 @@
 									"key": "filter",
 									"value": "name%3DAC"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Filter Clients by Date",
 					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin-token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiUrl}}/v3/clients?filter=endDate%3D2015-05-19T09%3A00Z",
 							"host": [
@@ -1058,27 +1161,8 @@
 									"key": "filter",
 									"value": "endDate%3D2015-05-19T09%3A00Z"
 								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{admin-token}}",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
+							]
+						}
 					},
 					"response": []
 				}

@@ -51,8 +51,13 @@ import java.util.List;
  *  -- add methods to create/update/get challenge fee and challenge fee percentage for project
  * </p>
  * 
+ * <p>
+ * Version 1.4 - Quick 48hours! Topcoder - Update Logic For Challenge Fees Managment v1.0
+ * -  update the challenge fees management logic in billing accounts
+ * </p>
+ * 
  * @author TCSCODER
- * @version 1.3
+ * @version 1.4 
  */
 public class BillingAccountManager extends BaseManager {
     /**
@@ -322,9 +327,8 @@ public class BillingAccountManager extends BaseManager {
         if (projectId <= 0) {
             throw new SupplyException("The billing account id must be positive", 400);
         }
-        if (billingAccountFees.getChallengeFees() == null || billingAccountFees.getChallengeFees().size() == 0) {
-            throw new SupplyException("The challenge fee data should be provided", 400);
-        }
+        this.validateAccountChallengeFees(billingAccountFees);
+        
         long userId = Long.parseLong(user.getUserId().getId());
         try {
             IdDTO idDto = this.billingAccountDAO.checkBillingAccountExists(projectId);
@@ -332,32 +336,40 @@ public class BillingAccountManager extends BaseManager {
                 throw new SupplyException("The billing account does not exist with the id:" + projectId, 404);
             }
             
-            idDto = this.billingAccountDAO.checkChallengeFeeExists(projectId);
-            if (idDto.getId() > 0) {
-                throw new SupplyException("The challenge fee was created for the billing account", 400);
-            }
-            List<ChallengeType> types = this.getChallengeTypes();
-            for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
-                long id = this.challengeFeeIdGenerator.getNextId();
-                fee.setId(id);
-                fee.setProjectId(projectId);
-                Date date = new Date();
-                fee.setCreatedAt(date);
-                fee.setUpdatedAt(date);
-                fee.setCreatedBy(user.getUserId().getId());
-                fee.setUpdatedBy(user.getUserId().getId());
-                for (ChallengeType type : types) {
-                    if (type.getChallengeTypeId() == fee.getChallengeTypeId()) {
-                        fee.setStudio(type.isStudio());
-                        fee.setChallengeTypeDescription(type.getDescription());
-                    }
+            if (billingAccountFees.isChallengeFeeFixed()) {
+                idDto = this.billingAccountDAO.checkChallengeFeeExists(projectId);
+                if (idDto.getId() > 0) {
+                    throw new SupplyException("The challenge fee was created for the billing account", 400);
                 }
-                this.billingAccountDAO.createChallengeFee(id, fee.getProjectId(), fee.isStudio() ? 1 : 0, 
-                        fee.getChallengeTypeId(), fee.getChallengeFee(), userId, fee.getName(), fee.isDeleted());
+                
+                this.setChallengeTypeForChallengeFee(billingAccountFees.getChallengeFees());
+                for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
+                    long id = this.challengeFeeIdGenerator.getNextId();
+                    fee.setId(id);
+                    fee.setProjectId(projectId);
+                    Date date = new Date();
+                    fee.setCreatedAt(date);
+                    fee.setUpdatedAt(date);
+                    fee.setCreatedBy(user.getUserId().getId());
+                    fee.setUpdatedBy(user.getUserId().getId());
+                    this.billingAccountDAO.createChallengeFee(id, fee.getProjectId(), fee.isStudio() ? 1 : 0, fee.getChallengeTypeId(), fee.getChallengeFee(),
+                            userId, fee.getName(), fee.isDeleted());
+                }
             }
             
-            this.processChallengeFeePercentage(userId, projectId, billingAccountFees.isChallengeFeeFixed(), 
-                    billingAccountFees.getChallengeFeePercentage());
+            // create the percentage fee
+            ChallengeFeePercentage percentage = this.billingAccountDAO.getChallengeFeePercentage(projectId);
+            if (percentage != null) {
+                throw new SupplyException("The challenge fee was created for the billing account", 400);
+            }
+            percentage = new ChallengeFeePercentage();
+            percentage.setId(this.challengeFeePercentageIdGenerator.getNextId());
+            percentage.setProjectId(projectId);        
+            percentage.setActive(!billingAccountFees.isChallengeFeeFixed());
+            percentage.setChallengeFeePercentage(billingAccountFees.getChallengeFeePercentage());
+            this.billingAccountDAO.createChallengeFeePercentage(percentage.getId(), percentage.getProjectId(), 
+                    percentage.getChallengeFeePercentage(), percentage.isActive(), userId);
+            
         } catch (SupplyException se) { 
             throw se;
         } catch (Exception exp) {
@@ -381,75 +393,73 @@ public class BillingAccountManager extends BaseManager {
         if (projectId <= 0) {
             throw new SupplyException("The billing account id must be positive", 400);
         }
-        if (billingAccountFees.getChallengeFees() == null || billingAccountFees.getChallengeFees().size() == 0) {
-            throw new SupplyException("The challenge fee data should be provided", 400);
-        }
+        this.validateAccountChallengeFees(billingAccountFees);
+        
         long userId = Long.parseLong(user.getUserId().getId());
         try {
             BillingAccountFees exists = this.getBillingAccountFees(user, projectId);
-            List<ChallengeFee> temp = exists.getChallengeFees();
+            List<ChallengeFee> oldChallengeFees = exists.getChallengeFees();
+            if (oldChallengeFees == null) {
+                oldChallengeFees = new ArrayList<ChallengeFee>();
+            }
            
-            List<ChallengeFee> feesToUpdate = new ArrayList<ChallengeFee>();
-            for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
-                if (fee.getId() > 0) {
-                    ChallengeFee hit = null;
-                    for (ChallengeFee tp : temp) {
-                        if (fee.getId() == tp.getId()) {
-                            hit = tp;
-                            break;
+            if (billingAccountFees.isChallengeFeeFixed()) {
+                List<ChallengeFee> feesToUpdate = new ArrayList<ChallengeFee>();
+                for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
+                    if (fee.getId() > 0) {
+                        ChallengeFee hit = null;
+                        for (ChallengeFee tp : oldChallengeFees) {
+                            if (fee.getId() == tp.getId()) {
+                                hit = tp;
+                                break;
+                            }
+                        }
+                        if (hit == null) {
+                            throw new SupplyException("The challenge fee does not exists for the project(" + projectId + ") with the id:" + fee.getId(), 404);
+                        } else {
+                            feesToUpdate.add(hit);
                         }
                     }
-                    if (hit == null) {
-                        throw new SupplyException("The challenge fee does not exists for the project(" + projectId + ") with the id:" + fee.getId(), 404);
+                }
+
+                List<ChallengeFee> toDelete = new ArrayList<ChallengeFee>(oldChallengeFees);
+                toDelete.removeAll(feesToUpdate);
+                this.deleteChallengeFees(toDelete);
+                
+                this.setChallengeTypeForChallengeFee(billingAccountFees.getChallengeFees());
+                for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
+                    fee.setProjectId(projectId);
+                    Date date = new Date();
+                    fee.setUpdatedAt(date);
+                    fee.setUpdatedBy(user.getUserId().getId());
+                    if (fee.getId() <= 0) {
+                        long id = this.challengeFeeIdGenerator.getNextId();
+                        fee.setId(id);
+                        fee.setCreatedBy(user.getUserId().getId());
+                        fee.setUpdatedBy(user.getUserId().getId());
+                        this.billingAccountDAO.createChallengeFee(id, fee.getProjectId(), fee.isStudio() ? 1 : 0, 
+                                fee.getChallengeTypeId(), fee.getChallengeFee(), userId, fee.getName(), fee.isDeleted());
                     } else {
-                        feesToUpdate.add(hit);
+                        this.billingAccountDAO.updateChallengeFee(fee.getId(), fee.getProjectId(), fee.isStudio() ? 1 : 0, 
+                                fee.getChallengeTypeId(), fee.getChallengeFee(), userId, fee.getName(), fee.isDeleted());
                     }
                 }
+            } else {
+                this.deleteChallengeFees(oldChallengeFees);
+            }
+            
+            // update the percentage fee
+            ChallengeFeePercentage percentage = this.billingAccountDAO.getChallengeFeePercentage(projectId);
+            if (percentage == null) {
+                throw new SupplyException("The percentage fee does not exist for the project(" + projectId + ")", 404);
             }
 
-            List<ChallengeFee> toDelete = new ArrayList<ChallengeFee>(temp);
-            toDelete.removeAll(feesToUpdate);
-            if (toDelete.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (ChallengeFee fee : toDelete) {
-                    sb.append(fee.getId() + ",");
-                }
-                FilterParameter filter = new FilterParameter("projectContestFeeIds=in(" + sb.substring(0, sb.length() - 1) + ")");
-                QueryParameter queryParameter = new QueryParameter(new FieldSelector());
-                queryParameter.setFilter(filter);
-                
-                this.billingAccountDAO.deleteChallengeFee(queryParameter);
-            }
+            percentage.setActive(!billingAccountFees.isChallengeFeeFixed());
+            percentage.setChallengeFeePercentage(billingAccountFees.getChallengeFeePercentage());
+
+            this.billingAccountDAO.updateChallengeFeePercentage(percentage.getId(), percentage.getProjectId(), percentage.getChallengeFeePercentage(),
+                    percentage.isActive(), userId);
             
-            
-            List<ChallengeType> types = this.getChallengeTypes();
-            for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
-                for (ChallengeType type : types) {
-                    if (type.getChallengeTypeId() == fee.getChallengeTypeId()) {
-                        fee.setStudio(type.isStudio());
-                        fee.setChallengeTypeDescription(type.getDescription());
-                    }
-                }
-                fee.setProjectId(projectId);
-                Date date = new Date();
-                fee.setUpdatedAt(date);
-                fee.setUpdatedBy(user.getUserId().getId());
-                if (fee.getId() <= 0) {
-                    long id = this.challengeFeeIdGenerator.getNextId();
-                    fee.setId(id);
-                    fee.setCreatedBy(user.getUserId().getId());
-                    fee.setUpdatedBy(user.getUserId().getId());
-                    this.billingAccountDAO.createChallengeFee(id, fee.getProjectId(), fee.isStudio() ? 1 : 0, 
-                            fee.getChallengeTypeId(), fee.getChallengeFee(), userId, fee.getName(), fee.isDeleted());
-                } else {
-                    
-                    this.billingAccountDAO.updateChallengeFee(fee.getId(), fee.getProjectId(), fee.isStudio() ? 1 : 0, 
-                            fee.getChallengeTypeId(), fee.getChallengeFee(), userId, fee.getName(), fee.isDeleted());
-                }
-            }
-            
-            this.processChallengeFeePercentage(userId, projectId, billingAccountFees.isChallengeFeeFixed(), 
-                    billingAccountFees.getChallengeFeePercentage());
         } catch (SupplyException se) { 
             throw se;
         } catch (Exception exp) {
@@ -479,28 +489,31 @@ public class BillingAccountManager extends BaseManager {
             }
             
             BillingAccountFees bf = new BillingAccountFees();
-            List<ChallengeFee> fees = this.billingAccountDAO.getChallengeFee(projectId);
-            if (fees == null || fees.size() == 0) {
-                throw new SupplyException("The challenge fee was not created for the billing account", 404);
-            }
-            bf.setChallengeFees(fees);
-            List<ChallengeType> types = this.getChallengeTypes();
-            for (ChallengeFee fee : fees) { 
-                for (ChallengeType type : types) { 
-                    if (type.getChallengeTypeId() == fee.getChallengeTypeId()) {
-                        fee.setChallengeTypeDescription(type.getDescription());
-                    }
-                }
-            }
-            
             ChallengeFeePercentage percentage = this.billingAccountDAO.getChallengeFeePercentage(projectId);
-            bf.setChallengeFeePercentage(percentage.getChallengeFeePercentage());
-            if (percentage.isActive()) {
+            if (percentage != null && percentage.isActive()) {
+                bf.setChallengeFeeFixed(false);
                 bf.setChallengeFeePercentage(percentage.getChallengeFeePercentage());
             } else {
-                bf.setChallengeFeePercentage(0);
+                List<ChallengeFee> fees = this.billingAccountDAO.getChallengeFee(projectId);
+                if (fees == null || fees.size() == 0) {
+                    throw new SupplyException("The challenge fee was not created for the billing account", 404);
+                }
+                List<ChallengeFee> notDeletedFees = new ArrayList<ChallengeFee>();
+                for (ChallengeFee fee : fees) {
+                    if (!fee.isDeleted()) {
+                        notDeletedFees.add(fee);
+                    }
+                }
+                if (notDeletedFees.isEmpty()) {
+                    throw new SupplyException("No active challenge fee found for the billing account", 404);
+                }
+                
+                bf.setChallengeFees(notDeletedFees);
+                this.setChallengeTypeForChallengeFee(bf.getChallengeFees());
+                
+                bf.setChallengeFeeFixed(true);
             }
-            bf.setChallengeFeeFixed(!percentage.isActive());
+            
             return bf;
         } catch (SupplyException se) { 
             throw se;
@@ -512,38 +525,68 @@ public class BillingAccountManager extends BaseManager {
     }
     
     /**
-     * Process challenge fee percentage
+     * Set challenge type for challenge fee
      *
-     * @param userId the userId to use
-     * @param projectId the projectId to use
-     * @param challengeFeeFixed the challengeFeeFixed to use
-     * @param challengeFeePercentage the challengeFeePercentage to use
+     * @param challengeFees the challengeFees to use
      */
-    private void processChallengeFeePercentage(long userId, long projectId, boolean challengeFeeFixed, 
-            double challengeFeePercentage) throws SupplyException {
-        ChallengeFeePercentage percentage = this.billingAccountDAO.getChallengeFeePercentage(projectId);
-        boolean exist = (percentage != null); 
-        if (!exist) {        
-            // create the percentage
-            percentage = new ChallengeFeePercentage();
-            percentage.setId(this.challengeFeePercentageIdGenerator.getNextId());
-            percentage.setProjectId(projectId);        
+    private void setChallengeTypeForChallengeFee(List<ChallengeFee> challengeFees) {
+        if (challengeFees == null) {
+            return;
         }
-        percentage.setActive(!challengeFeeFixed);
-        if (percentage.isActive()) {
-            percentage.setChallengeFeePercentage(challengeFeePercentage);
+        List<ChallengeType> types = this.getChallengeTypes();
+        for (ChallengeFee fee : challengeFees) { 
+            for (ChallengeType type : types) { 
+                if (type.getChallengeTypeId() == fee.getChallengeTypeId()) {
+                    fee.setChallengeTypeDescription(type.getDescription());
+                    fee.setStudio(type.isStudio());
+                }
+            }
+        }
+    }
+    
+    /**
+     * Validate account challenge fees
+     *
+     * @param billingAccountFees the billingAccountFees to validate
+     * @throws SupplyException if any error occurs
+     */
+    private void validateAccountChallengeFees(BillingAccountFees billingAccountFees) throws SupplyException {
+        if (billingAccountFees.isChallengeFeeFixed()) {
+            if (billingAccountFees.getChallengeFees() == null || billingAccountFees.getChallengeFees().size() == 0) {
+                throw new SupplyException("The challenge fee data should be provided", 400);
+            }
+            if (billingAccountFees.getChallengeFeePercentage() != null) {
+                throw new SupplyException("The challenge fee percentage should not be provided", 400);
+            }
         } else {
-            percentage.setChallengeFeePercentage(0);
+            if (billingAccountFees.getChallengeFees() != null) {
+                throw new SupplyException("The challenge fee data should not be provided", 400);
+            }
+            if (billingAccountFees.getChallengeFeePercentage() == null) {
+                throw new SupplyException("The challenge fee percentage should be provided", 400);
+            }
         }
-
-        // create or update the percentage
-        if (exist) {
-            this.billingAccountDAO.updateChallengeFeePercentage(percentage.getId(), percentage.getProjectId(), 
-                    percentage.getChallengeFeePercentage(), percentage.isActive(), userId);
-        } else {
-            this.billingAccountDAO.createChallengeFeePercentage(percentage.getId(), percentage.getProjectId(), 
-                    percentage.getChallengeFeePercentage(), percentage.isActive(), userId);
+    }
+    
+    /**
+     * Delete challenge fees
+     *
+     * @param challengeFees the challengeFees to use
+     * @throws SupplyException if any error occurs
+     */
+    private void deleteChallengeFees(List<ChallengeFee> challengeFees) throws SupplyException {
+        if (challengeFees == null || challengeFees.size() == 0) {
+            return;
         }
+        StringBuilder sb = new StringBuilder();
+        for (ChallengeFee fee : challengeFees) {
+            sb.append(fee.getId()).append(",");
+        }
+        FilterParameter filter = new FilterParameter("projectContestFeeIds=in(" + sb.substring(0, sb.length() - 1) + ")");
+        QueryParameter queryParameter = new QueryParameter(new FieldSelector());
+        queryParameter.setFilter(filter);
+        
+        this.billingAccountDAO.deleteChallengeFee(queryParameter);
     }
     
     /**
