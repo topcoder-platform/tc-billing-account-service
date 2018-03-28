@@ -4,10 +4,9 @@
 package com.appirio.service.billingaccount;
 
 import com.appirio.service.BaseApplication;
-import com.appirio.service.billingaccount.api.BillingAccount;
-import com.appirio.service.billingaccount.api.Client;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
 import com.appirio.service.billingaccount.dao.ClientDAO;
+import com.appirio.service.billingaccount.dao.SequenceDAO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
 import com.appirio.service.billingaccount.manager.ClientManager;
 import com.appirio.service.billingaccount.resources.BillingAccountResource;
@@ -15,7 +14,6 @@ import com.appirio.service.billingaccount.resources.ClientResource;
 import com.appirio.service.supply.resources.SupplyDatasourceFactory;
 import com.appirio.supply.DAOFactory;
 import com.appirio.supply.dataaccess.db.IdGenerator;
-
 import io.dropwizard.setup.Environment;
 
 import java.util.ArrayList;
@@ -88,8 +86,7 @@ public class BillingAccountServiceApplication extends BaseApplication<BillingAcc
         		new BillingAccountManager(DAOFactory.getInstance().createDAO(BillingAccountDAO.class),
         				IdGenerator.getInstance("com.topcoder.timetracker.ProjectManager"),
         				IdGenerator.getInstance("com.topcoder.timetracker.user.User"),
-        				IdGenerator.getInstance("project_contest_fee_seq"),
-        				IdGenerator.getInstance("project_contest_fee_percentage_seq"));
+        				DAOFactory.getInstance().createDAO(SequenceDAO.class));
 
     	// initialize the client manager
         ClientManager clientManager = new ClientManager(DAOFactory.getInstance().createDAO(ClientDAO.class),

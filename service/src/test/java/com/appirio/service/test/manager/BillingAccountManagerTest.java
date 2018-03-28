@@ -9,6 +9,7 @@ import com.appirio.service.billingaccount.api.BillingAccountUser;
 import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.api.PaymentTermsDTO;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
+import com.appirio.service.billingaccount.dao.SequenceDAO;
 import com.appirio.service.billingaccount.dto.TCUserDTO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
 import com.appirio.service.test.dao.GenericDAOTest;
@@ -29,7 +30,8 @@ import static org.junit.Assert.*;
 public class BillingAccountManagerTest extends GenericDAOTest {
     private BillingAccountDAO billingAccountDAO = mock(BillingAccountDAO.class);
     private IdGenerator generator = mock(IdGenerator.class);
-    private BillingAccountManager unit = new BillingAccountManager(billingAccountDAO, generator, generator, null, null);
+    private SequenceDAO sequenceDAO = mock(SequenceDAO.class);
+    private BillingAccountManager unit = new BillingAccountManager(billingAccountDAO, generator, generator, sequenceDAO);
 
     @Test
     public void testSearchBillingAccounts() {
@@ -44,7 +46,7 @@ public class BillingAccountManagerTest extends GenericDAOTest {
     public void testSearchMyBillingAccounts() {
         QueryResult<List<BillingAccount>> expected = getListQueryResult();
         when(billingAccountDAO.searchMyBillingAccounts(anyObject(), anyObject())).thenReturn(expected);
-        QueryResult<List<BillingAccount>> result = unit.searchMyBillingAccounts(1l, createQueryParam(""));
+        QueryResult<List<BillingAccount>> result = unit.searchMyBillingAccounts(1L, createQueryParam(""));
         assertEquals(2, result.getData().size());
         verify(billingAccountDAO).searchMyBillingAccounts(anyObject(), anyObject());
     }
@@ -69,9 +71,9 @@ public class BillingAccountManagerTest extends GenericDAOTest {
                 anyObject(),
                 anyObject(),
                 anyObject(),
-                anyObject(), false)).thenReturn(1l);
+                anyObject(), false)).thenReturn(1L);
 
-        when(generator.getNextId()).thenReturn(1l);
+        when(generator.getNextId()).thenReturn(1L);
         when(billingAccountDAO.checkCompanyExists(anyObject())).thenReturn(new IdDTO());
 
         BillingAccount test = new BillingAccount();
@@ -105,7 +107,7 @@ public class BillingAccountManagerTest extends GenericDAOTest {
         expected.getData().remove(1);
 
         when(billingAccountDAO.getBillingAccount(anyObject())).thenReturn(expected);
-        QueryResult<List<BillingAccount>> result = unit.getBillingAccount(1l);
+        QueryResult<List<BillingAccount>> result = unit.getBillingAccount(1L);
         assertEquals(1, result.getData().size());
         verify(billingAccountDAO).getBillingAccount(anyObject());
     }
@@ -143,29 +145,29 @@ public class BillingAccountManagerTest extends GenericDAOTest {
     public void testGetBillingAccountUsers() {
         QueryResult<List<BillingAccountUser>> expected = new QueryResult<>(new ArrayList<>());
         when(billingAccountDAO.getBillingAccountUsers(anyObject(), anyObject())).thenReturn(expected);
-        QueryResult<List<BillingAccountUser>> result = unit.getBillingAccountUsers(1l, createQueryParam(""));
+        QueryResult<List<BillingAccountUser>> result = unit.getBillingAccountUsers(1L, createQueryParam(""));
         assertEquals(0, result.getData().size());
         verify(billingAccountDAO).getBillingAccountUsers(anyObject(), anyObject());
     }
 
     //@Test
     public void testRemoveBillingAccountUsers() throws SupplyException {
-        unit.removeUserFromBillingAccount(1l, 1l);
+        unit.removeUserFromBillingAccount(1L, 1L);
         verify(billingAccountDAO).removeUserFromBillingAccount(anyObject(), anyObject());
     }
 
     public void testAddUserToBillingAccount() throws SupplyException {
         QueryResult<List<BillingAccount>> expected = getListQueryResult();
         QueryResult<List<BillingAccountUser>> expectedUsers = new QueryResult<>(new ArrayList<>());
-        IdDTO expectedId = new IdDTO(1l);
-        TCUserDTO expectedUser = new TCUserDTO(1l,"handle");
+        IdDTO expectedId = new IdDTO(1L);
+        TCUserDTO expectedUser = new TCUserDTO(1L,"handle");
         expected.getData().remove(1);
 
         when(billingAccountDAO.getBillingAccount(anyObject())).thenReturn(expected);
         when(billingAccountDAO.checkUserExists(anyObject())).thenReturn(expectedId);
         when(billingAccountDAO.getBillingAccountUsers(anyObject(), createQueryParam(""))).thenReturn(expectedUsers);
         when(billingAccountDAO.getTCUserById(anyObject())).thenReturn(expectedUser);
-        QueryResult<List<BillingAccount>> result = unit.addUserToBillingAccount(new AuthUser(), 1l, 1l);
+        QueryResult<List<BillingAccount>> result = unit.addUserToBillingAccount(new AuthUser(), 1L, 1L);
         assertEquals(1, result.getData().size());
         verify(billingAccountDAO).addUserToBillingAccount(anyObject(), anyObject(), anyObject());
         verify(billingAccountDAO).getBillingAccount(anyObject());
@@ -176,10 +178,10 @@ public class BillingAccountManagerTest extends GenericDAOTest {
     private QueryResult<List<BillingAccount>> getListQueryResult() {
         List<BillingAccount> billingAccounts = new ArrayList<>();
 
-        billingAccounts.add(new BillingAccount(1l, "1", "Active", new Date(), new Date(), 500.0f, 1.0f, "po1",
-        		new PaymentTermsDTO(1l, "30 Days"), "description1", "subscription#1", 1l, 0l, 1l, false ));
-        billingAccounts.add(new BillingAccount(2l, "2", "Active", new Date(), new Date(), 500.0f, 1.0f, "po2",
-        		new PaymentTermsDTO(1l, "30 Days"), "description2", "subscription#2", 1l, 0l, 1l, false));
+        billingAccounts.add(new BillingAccount(1L, "1", "Active", new Date(), new Date(), 500.0f, 1.0f, "po1",
+        		new PaymentTermsDTO(1L, "30 Days"), "description1", "subscription#1", 1L, 0L, 1L, false ));
+        billingAccounts.add(new BillingAccount(2L, "2", "Active", new Date(), new Date(), 500.0f, 1.0f, "po2",
+        		new PaymentTermsDTO(1L, "30 Days"), "description2", "subscription#2", 1L, 0L, 1L, false));
         QueryResult<List<BillingAccount>> expected = new QueryResult<>();
         expected.setData(billingAccounts);
         return expected;

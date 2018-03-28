@@ -298,7 +298,7 @@ public class BillingAccountResource extends BaseResource {
     public ApiResponse getBillingAccountFees(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId) {
         try {
             checkAdmin(user);
-            BillingAccountFees fees = this.billingAccountManager.getBillingAccountFees(user, billingAccountId);
+            BillingAccountFees fees = this.billingAccountManager.getBillingAccountFees(billingAccountId);
             return MetadataApiResponseFactory.createResponse(fees);
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
