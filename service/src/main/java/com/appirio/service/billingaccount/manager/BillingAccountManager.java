@@ -11,6 +11,7 @@ import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
 import com.appirio.service.billingaccount.api.ChallengeType;
 import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
+import com.appirio.service.billingaccount.dao.SequenceDAO;
 import com.appirio.service.billingaccount.dto.TCUserDTO;
 import com.appirio.supply.SupplyException;
 import com.appirio.supply.dataaccess.QueryResult;
@@ -63,12 +64,12 @@ public class BillingAccountManager extends BaseManager {
     /**
      * The CHALLENGE_TYPE_CACHE_KEY used to cache the challenge type list
      */
-    private static String CHALLENGE_TYPE_CACHE_KEY = "CHALLENGE_TYPE_CACHE_KEY";
+    private static final String CHALLENGE_TYPE_CACHE_KEY = "CHALLENGE_TYPE_CACHE_KEY";
 
     /**
      * The CHALLENGE_TYPE_CACHE_EXPIRED_TIME
      */
-    private static int CHALLENGE_TYPE_CACHE_EXPIRED_TIME = 600;
+    private static final int CHALLENGE_TYPE_CACHE_EXPIRED_TIME = 600;
     /**
      * DAO for the billing accounts
      */
@@ -85,14 +86,9 @@ public class BillingAccountManager extends BaseManager {
     private IdGenerator userAccountIdGenerator;
     
     /**
-     * The challengeFeeIdGenerator to generate the id
+     * The sequenceDAO to generate the id from different sequence
      */
-    private IdGenerator challengeFeeIdGenerator;
-    
-    /**
-     * The challengeFeePercentageIdGenerator to generate the id
-     */
-    private IdGenerator challengeFeePercentageIdGenerator;
+    private SequenceDAO sequenceDAO;
     
     /**
      * The cacheService to cache the data
@@ -105,18 +101,15 @@ public class BillingAccountManager extends BaseManager {
      * @param billingAccountDAO the billingAccountDAO to use
      * @param billingAccountIdGenerator the billingAccountIdGenerator to use
      * @param userAccountIdGenerator the userAccountIdGenerator to use
-     * @param challengeFeeIdGenerator the challengeFeeIdGenerator to use
-     * @param challengeFeePercentageIdGenerator the challengeFeePercentageIdGenerator to use
+     * @param sequenceDAO the sequenceDAO to use
      */
     public BillingAccountManager(BillingAccountDAO billingAccountDAO, IdGenerator billingAccountIdGenerator,
-            IdGenerator userAccountIdGenerator,
-            IdGenerator challengeFeeIdGenerator, IdGenerator challengeFeePercentageIdGenerator) {
+                                 IdGenerator userAccountIdGenerator,
+                                 SequenceDAO sequenceDAO) {
         this.billingAccountDAO = billingAccountDAO;
         this.billingAccountIdGenerator = billingAccountIdGenerator;
         this.userAccountIdGenerator = userAccountIdGenerator;
-        
-        this.challengeFeeIdGenerator = challengeFeeIdGenerator;
-        this.challengeFeePercentageIdGenerator = challengeFeePercentageIdGenerator;
+        this.sequenceDAO = sequenceDAO;
     }
 
     /**
@@ -260,7 +253,7 @@ public class BillingAccountManager extends BaseManager {
 
         // Check if the user has a user account.
         IdDTO id = billingAccountDAO.checkUserExists(tcUser.getHandle());
-        Long userAccountId = null;
+        Long userAccountId;
 
         if (id == null) { // The user does not have a user account, then we should create one.
             userAccountId = userAccountIdGenerator.getNextId();
@@ -295,7 +288,7 @@ public class BillingAccountManager extends BaseManager {
 
         //
         IdDTO id = billingAccountDAO.checkUserExists(tcUser.getHandle());
-        Long userAccountId = null;
+        Long userAccountId;
 
         if (id == null) { // The user does not even have a user account
             throw new SupplyException(String.format("The user {'id':'%s', 'handle':'/%s'} does not even have "
@@ -344,7 +337,7 @@ public class BillingAccountManager extends BaseManager {
                 
                 this.setChallengeTypeForChallengeFee(billingAccountFees.getChallengeFees());
                 for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
-                    long id = this.challengeFeeIdGenerator.getNextId();
+                    long id = this.sequenceDAO.getIdSequence("project_contest_fee_seq").getNextId();
                     fee.setId(id);
                     fee.setProjectId(projectId);
                     Date date = new Date();
@@ -363,7 +356,7 @@ public class BillingAccountManager extends BaseManager {
                 throw new SupplyException("The challenge fee was created for the billing account", 400);
             }
             percentage = new ChallengeFeePercentage();
-            percentage.setId(this.challengeFeePercentageIdGenerator.getNextId());
+            percentage.setId(this.sequenceDAO.getIdSequence("project_contest_fee_percentage_seq").getNextId());
             percentage.setProjectId(projectId);        
             percentage.setActive(!billingAccountFees.isChallengeFeeFixed());
             percentage.setChallengeFeePercentage(billingAccountFees.getChallengeFeePercentage());
@@ -397,14 +390,14 @@ public class BillingAccountManager extends BaseManager {
         
         long userId = Long.parseLong(user.getUserId().getId());
         try {
-            BillingAccountFees exists = this.getBillingAccountFees(user, projectId);
+            BillingAccountFees exists = this.getBillingAccountFees(projectId);
             List<ChallengeFee> oldChallengeFees = exists.getChallengeFees();
             if (oldChallengeFees == null) {
-                oldChallengeFees = new ArrayList<ChallengeFee>();
+                oldChallengeFees = new ArrayList<>();
             }
            
             if (billingAccountFees.isChallengeFeeFixed()) {
-                List<ChallengeFee> feesToUpdate = new ArrayList<ChallengeFee>();
+                List<ChallengeFee> feesToUpdate = new ArrayList<>();
                 for (ChallengeFee fee : billingAccountFees.getChallengeFees()) {
                     if (fee.getId() > 0) {
                         ChallengeFee hit = null;
@@ -422,7 +415,7 @@ public class BillingAccountManager extends BaseManager {
                     }
                 }
 
-                List<ChallengeFee> toDelete = new ArrayList<ChallengeFee>(oldChallengeFees);
+                List<ChallengeFee> toDelete = new ArrayList<>(oldChallengeFees);
                 toDelete.removeAll(feesToUpdate);
                 this.deleteChallengeFees(toDelete);
                 
@@ -433,7 +426,7 @@ public class BillingAccountManager extends BaseManager {
                     fee.setUpdatedAt(date);
                     fee.setUpdatedBy(user.getUserId().getId());
                     if (fee.getId() <= 0) {
-                        long id = this.challengeFeeIdGenerator.getNextId();
+                        long id = this.sequenceDAO.getIdSequence("project_contest_fee_seq").getNextId();
                         fee.setId(id);
                         fee.setCreatedBy(user.getUserId().getId());
                         fee.setUpdatedBy(user.getUserId().getId());
@@ -473,12 +466,11 @@ public class BillingAccountManager extends BaseManager {
     /**
      * Get billing account fees
      *
-     * @param user the user to use
      * @param projectId the projectId to use
      * @throws SupplyException if any error occurs
      * @return the BillingAccountFees result
      */
-    public BillingAccountFees getBillingAccountFees(AuthUser user, long projectId) throws SupplyException {
+    public BillingAccountFees getBillingAccountFees(long projectId) throws SupplyException {
         if (projectId <= 0) {
             throw new SupplyException("The billing account id must be positive", 400);
         }
@@ -498,7 +490,7 @@ public class BillingAccountManager extends BaseManager {
                 if (fees == null || fees.size() == 0) {
                     throw new SupplyException("The challenge fee was not created for the billing account", 404);
                 }
-                List<ChallengeFee> notDeletedFees = new ArrayList<ChallengeFee>();
+                List<ChallengeFee> notDeletedFees = new ArrayList<>();
                 for (ChallengeFee fee : fees) {
                     if (!fee.isDeleted()) {
                         notDeletedFees.add(fee);
