@@ -6,7 +6,7 @@ import com.appirio.supply.dataaccess.DatasourceName;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
 
-@DatasourceName("common")
+@DatasourceName("oltp")
 public interface SequenceDAO {
     @SqlQuery("SELECT SEQUENCE_<sequenceName>.nextval AS nextId FROM systables WHERE tabid = 1")
     IdSequence getIdSequence(@Define("sequenceName") String sequenceName);
