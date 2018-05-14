@@ -14,7 +14,7 @@
         <dropwizard.version>1.0.0</dropwizard.version>
 	    <powermock.version>1.5.4</powermock.version>
         <jackson-version>2.7.3</jackson-version>
-	    <supply-library.version>1.0.16-SNAPSHOT</supply-library.version>
+	    <supply-library.version>1.0.21-SNAPSHOT</supply-library.version>
     </properties>
 
     <dependencyManagement>
@@ -148,7 +148,7 @@
         </repository>
         <repository>
             <id>Appirio Technology Maven Repository</id>
-            <url>http://maven.appirio.net:8080/</url>
+            <url>http://maven.topcoder-dev.com:8080/</url>
             <snapshots>
                 <updatePolicy>always</updatePolicy>
             </snapshots>
@@ -156,6 +156,14 @@
                 <updatePolicy>always</updatePolicy>
             </releases>
         </repository>
+	<repository>
+	    <id>temp-maven-repo</id>
+	    <url>https://github.com/appirio-tech/temp-maven-repo/raw/master</url>
+            <snapshots>
+	         <enabled>true</enabled>
+                 <updatePolicy>always</updatePolicy>
+	    </snapshots>
+	 </repository>
     </repositories>
 
     <build>

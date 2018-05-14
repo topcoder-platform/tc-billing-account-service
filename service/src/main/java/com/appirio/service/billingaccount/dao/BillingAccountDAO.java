@@ -5,6 +5,9 @@ package com.appirio.service.billingaccount.dao;
 
 import com.appirio.service.billingaccount.api.BillingAccount;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
+import com.appirio.service.billingaccount.api.ChallengeFee;
+import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
+import com.appirio.service.billingaccount.api.ChallengeType;
 import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.dto.TCUserDTO;
 import com.appirio.supply.dataaccess.ApiQueryInput;
@@ -34,9 +37,19 @@ import java.util.List;
  *  -- Added checkClientExists(), addBillingAccountToClient() and removeBillingAccountFromClient()
  *  -- Updated getBillingAccountUsers() to support limit and offset
  * </p>
+ * 
+ * <p>
+ *  Changes in v 1.3 Topcoder - Create Challenge Fee Management APIs For Billing Accounts v1.0
+ *  -- add methods for create/update/get challenge fees and percentage
+ * </p>
+ * 
+ * <p>
+ * Version 1.4 - Quick 48hours! Topcoder - Update Logic For Challenge Fees Managment v1.0
+ * - For createChallengeFeePercentage and updateChallengeFeePercentage methods, change the type of challengeFeePercentage from double to Double
+ * </p>
  *
- * @author TCSCODER, TCSCODER
- * @version 1.2
+ * @author TCSCODER
+ * @version 1.4 
  */
 @DatasourceName("oltp")
 public interface BillingAccountDAO {
@@ -258,4 +271,121 @@ public interface BillingAccountDAO {
      */
     @SqlUpdateFile("sql/billing-account/remove-billing-account-from-client.sql")
     void removeBillingAccountFromClient(@Bind("billingAccountId") Long billingAccountId);
+    
+    /**
+     * Create challenge fee 
+     * 
+     * @param id the id to use
+     * @param projectId the projectId to use
+     * @param isStudio the isStudio to use
+     * @param challengeTypeId the challengeTypeId to use
+     * @param challengeFee the challengeFee to use
+     * @param userId the userId to use
+     * @param name the name to use
+     * @param deleted the deleted to use
+     */
+    @SqlUpdateFile("sql/billing-account/challenge-fees/create-challenge-fee.sql")
+    void createChallengeFee(
+            @Bind("id") long id, @Bind("projectId") long projectId, @Bind("isStudio") int isStudio, 
+            @Bind("challengeTypeId") long challengeTypeId, @Bind("challengeFee") double challengeFee, 
+            @Bind("userId") long userId, @Bind("name") String name, @Bind("deleted") boolean deleted);
+    
+    /**
+     * Update challenge fee 
+     * 
+     * @param id the id to use
+     * @param projectId the projectId to use
+     * @param isStudio the isStudio to use
+     * @param challengeTypeId the challengeTypeId to use
+     * @param challengeFee the challengeFee to use
+     * @param userId the userId to use
+     * @param name the name to use
+     * @param deleted the deleted to use
+     */
+    @SqlUpdateFile("sql/billing-account/challenge-fees/update-challenge-fee.sql")
+    void updateChallengeFee(
+            @Bind("id") long id, @Bind("projectId") long projectId, 
+            @Bind("isStudio") int isStudio, @Bind("challengeTypeId") long challengeTypeId, 
+            @Bind("challengeFee") double challengeFee, @Bind("userId") long userId, 
+            @Bind("name") String name, @Bind("deleted") boolean deleted);
+    
+    /**
+     * Get challenge fee 
+     *
+     * @param projectId the project id to use
+     * @return a list of challenge fees
+     */
+    @SqlQueryFile("sql/billing-account/challenge-fees/get-challenge-fee.sql")
+    List<ChallengeFee> getChallengeFee(@Bind("projectId") long projectId);
+    
+    /**
+     * Get challenge fee count 
+     * 
+     * @param projectId the projectId to use
+     * @return the count of challenge fees
+     */
+    @SqlQueryFile("sql/billing-account/challenge-fees/check-challenge-fee-exists.sql")
+    IdDTO checkChallengeFeeExists(@Bind("projectId") long projectId);
+    
+    /**
+     * Create challenge fee percentage 
+     * 
+     * @param id the id to use
+     * @param projectId the projectId to use
+     * @param challengeFeePercentage the challengeFeePercentage to use
+     * @param active the active to use
+     * @param userId the userId to use
+     */
+    @SqlUpdateFile("sql/billing-account/challenge-fees/create-challenge-fee-percentage.sql")
+    void createChallengeFeePercentage(
+            @Bind("id") long id, @Bind("projectId") long projectId, @Bind("challengeFeePercentage")
+            Double challengeFeePercentage, @Bind("active") boolean active, @Bind("userId") long userId);
+    
+    /**
+     * Get challenge fee percentage 
+     *
+     * @param projectId the projectId to use
+     * @return the result
+     */
+    @SqlQueryFile("sql/billing-account/challenge-fees/get-challenge-fee-percentage.sql")
+    ChallengeFeePercentage getChallengeFeePercentage(@Bind("projectId") long projectId);
+    
+    /**
+     * Update challenge fee percentage 
+     * 
+     * @param id the id to use
+     * @param projectId the projectId to use
+     * @param challengeFeePercentage the challengeFeePercentage to use
+     * @param active the active to use
+     * @param userId the userId to use
+     */
+    @SqlUpdateFile("sql/billing-account/challenge-fees/update-challenge-fee-percentage.sql")
+    void updateChallengeFeePercentage(
+            @Bind("id") long id, @Bind("projectId") long projectId, @Bind("challengeFeePercentage") Double challengeFeePercentage, 
+            @Bind("active") boolean active, @Bind("userId") long userId);
+    
+    /**
+     * Get project categories replatforming 
+     * 
+     * @return a list of ChallengeType
+     */
+    @SqlQueryFile("sql/billing-account/challenge-fees/get-project-categories-replatforming.sql")
+    List<ChallengeType> getProjectCategoriesReplatforming();
+    
+    /**
+     * Check billing account exists 
+     *
+     * @param projectId the projectId to use
+     * @return the id result
+     */
+    @SqlQueryFile("sql/billing-account/challenge-fees/check-billing-account-exists.sql")
+    IdDTO checkBillingAccountExists(@Bind("projectId") long projectId);
+    
+    /**
+     * Delete challenge fee
+     *
+     * @param queryParameter the queryParameter to use
+     */
+    @SqlUpdateFile("sql/billing-account/challenge-fees/delete-challenge-fee.sql")
+    void deleteChallengeFee(@ApiQueryInput QueryParameter queryParameter);
 }

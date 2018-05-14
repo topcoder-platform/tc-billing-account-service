@@ -4,10 +4,9 @@
 package com.appirio.service.billingaccount;
 
 import com.appirio.service.BaseApplication;
-import com.appirio.service.billingaccount.api.BillingAccount;
-import com.appirio.service.billingaccount.api.Client;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
 import com.appirio.service.billingaccount.dao.ClientDAO;
+import com.appirio.service.billingaccount.dao.SequenceDAO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
 import com.appirio.service.billingaccount.manager.ClientManager;
 import com.appirio.service.billingaccount.resources.BillingAccountResource;
@@ -15,7 +14,6 @@ import com.appirio.service.billingaccount.resources.ClientResource;
 import com.appirio.service.supply.resources.SupplyDatasourceFactory;
 import com.appirio.supply.DAOFactory;
 import com.appirio.supply.dataaccess.db.IdGenerator;
-
 import io.dropwizard.setup.Environment;
 
 import java.util.ArrayList;
@@ -30,9 +28,14 @@ import java.util.List;
  *   -- Updated registerResources() to register the ClientResource.
  *  </li>
  * </p>
+ * 
+ * <p>
+ *  Changes in v 1.2 Topcoder - Create Challenge Fee Management APIs For Billing Accounts v1.0
+ *  -- modified registerResources to create the BillingAccountManager with id generators for challenge fee and percentage.
+ * </p>
  *
- * @author TCSCODER, TCSCODER
- * @version 1.1
+ * @author TCSCODER
+ * @version 1.2
  */
 public class BillingAccountServiceApplication extends BaseApplication<BillingAccountServiceConfiguration> {
 
@@ -82,7 +85,8 @@ public class BillingAccountServiceApplication extends BaseApplication<BillingAcc
     	BillingAccountManager billingAccountManager = 
         		new BillingAccountManager(DAOFactory.getInstance().createDAO(BillingAccountDAO.class),
         				IdGenerator.getInstance("com.topcoder.timetracker.ProjectManager"),
-        				IdGenerator.getInstance("com.topcoder.timetracker.user.User"));
+        				IdGenerator.getInstance("com.topcoder.timetracker.user.User"),
+        				DAOFactory.getInstance().createDAO(SequenceDAO.class));
 
     	// initialize the client manager
         ClientManager clientManager = new ClientManager(DAOFactory.getInstance().createDAO(ClientDAO.class),

@@ -4,6 +4,7 @@
 package com.appirio.service.billingaccount.resources;
 
 import com.appirio.service.billingaccount.api.BillingAccount;
+import com.appirio.service.billingaccount.api.BillingAccountFees;
 import com.appirio.service.billingaccount.api.BillingAccountUpdatedDTO;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
 import com.appirio.service.billingaccount.api.UserIdDTO;
@@ -27,6 +28,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -50,8 +52,12 @@ import java.util.List;
  *  -- Add offset and limit parameters for searchMyBillingAccounts() and getBillingAccountUsers()
  * </p>
  *
+ * <p>
+ *  Changes in v 1.3 Topcoder - Create Challenge Fee Management APIs For Billing Accounts v1.0
+ *  -- add three endpoints to create/update/get billing account fees
+ * </p>
  * @author TCSCODER, TCSCODER.
- * @version 1.2
+ * @version 1.3
  */
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -227,6 +233,73 @@ public class BillingAccountResource extends BaseResource {
             getBillingAccounts(billingAccountId);
             return MetadataApiResponseFactory.createResponse(billingAccountManager.addUserToBillingAccount(user,
                     billingAccountId, request.getParam().getUserId()));
+        } catch (Exception e) {
+            return ErrorHandler.handle(e, logger);
+        }
+    }
+    
+    /**
+     * Create billing account fees
+     *
+     * @param user the user to use
+     * @param billingAccountId the billingAccountId to use
+     * @param request the request to use
+     * @param challengeFeeFixed the challengeFeeFixed to use
+     * @param challengeFeePercentage the challengeFeePercentage to use
+     * @param projectId the projectId to use
+     * @return the ApiResponse result
+     */
+    @POST
+    @Path("billing-accounts/{billingAccountId}/fees")
+    public ApiResponse createBillingAccountFees(@Auth AuthUser user,
+            @PathParam("billingAccountId") Long billingAccountId, @Valid PostPutRequest<BillingAccountFees> request) {
+        try {
+            checkAdmin(user);
+            BillingAccountFees fees = this.billingAccountManager.createBillingAccountFees(
+                    user, request.getParam(), billingAccountId);
+            return MetadataApiResponseFactory.createResponse(fees);
+        } catch (Exception e) {
+            return ErrorHandler.handle(e, logger);
+        }
+    }
+    
+    /**
+     * Update billing account fees
+     *
+     * @param user the user to use
+     * @param billingAccountId the billingAccountId to use
+     * @param request the request to use
+     * @param projectId the projectId to use
+     * @return the ApiResponse result
+     */
+    @PUT
+    @Path("billing-accounts/{billingAccountId}/fees")
+    public ApiResponse updateBillingAccountFees(@Auth AuthUser user,
+            @PathParam("billingAccountId") Long billingAccountId, @Valid PostPutRequest<BillingAccountFees> request) {
+        try {
+            checkAdmin(user);
+            BillingAccountFees fees = this.billingAccountManager.updateBillingAccountFees(
+                    user, request.getParam(), billingAccountId);
+            return MetadataApiResponseFactory.createResponse(fees);
+        } catch (Exception e) {
+            return ErrorHandler.handle(e, logger);
+        }
+    }
+    
+    /**
+     * Get billing account fees
+     *
+     * @param user the user to use
+     * @param billingAccountId the billingAccountId to use
+     * @return the ApiResponse result
+     */
+    @GET
+    @Path("billing-accounts/{billingAccountId}/fees")
+    public ApiResponse getBillingAccountFees(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId) {
+        try {
+            checkAdmin(user);
+            BillingAccountFees fees = this.billingAccountManager.getBillingAccountFees(billingAccountId);
+            return MetadataApiResponseFactory.createResponse(fees);
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
         }

@@ -6,6 +6,9 @@ PATCH billing-accounts\/.*\/
 GET billing-accounts\/.*\/users\/
 POST billing-accounts\/.*\/users\/
 DELETE billing-accounts\/.*\/users\/.*\/
+GET billing-accounts\/.*\/fees\/
+POST billing-accounts\/.*\/fees\/
+PUT billing-accounts\/.*\/fees\/
 GET clients\/
 POST clients\/
 GET clients\/.*\/
