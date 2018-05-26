@@ -1,0 +1,15 @@
+{
+	"challengeFeeFixed": true,
+	"challengeFeePercentage": null,
+	"challengeFees": [{
+			"id": 1,
+			"projectId": 80000010,
+			"challengeTypeId": 39,
+			"challengeFee": 500,
+			"studio": false,
+			"challengeTypeDescription": "Code",
+			"deleted": false,
+			"name": "Code xxx"
+		}
+	]
+}
