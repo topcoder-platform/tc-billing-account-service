@@ -1,0 +1,1 @@
+SELECT seqName.nextval AS nextId FROM systables WHERE tabid = 1

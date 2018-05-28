@@ -1,0 +1,2 @@
+INSERT INTO client(client_id, company_id, salestax, payment_term_id, name, status, start_date, end_date, code_name, customer_number, creation_user, creation_date, modification_user, modification_date)
+VALUES(:id, -1, 0, -1, :name, :status, :startDate, :endDate, :codeName, :customerNumber, :userId, current, :userId, current)
