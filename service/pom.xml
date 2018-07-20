@@ -14,7 +14,7 @@
         <dropwizard.version>1.0.0</dropwizard.version>
 	    <powermock.version>1.5.4</powermock.version>
         <jackson-version>2.7.3</jackson-version>
-	    <supply-library.version>1.0.21-SNAPSHOT</supply-library.version>
+	    <supply-library.version>1.0.20-SNAPSHOT</supply-library.version>
     </properties>
 
     <dependencyManagement>
