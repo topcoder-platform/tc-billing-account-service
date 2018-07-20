@@ -122,16 +122,14 @@
     </dependencies>
     <distributionManagement>
         <!-- for deployment on the build server -->
-        <repository>
-            <id>appirio-repo</id>
-            <name>Appirio Maven Repository</name>
-            <url>file:///mnt/maven/repository</url>
-        </repository>
-        <snapshotRepository>
-            <id>appirio-repo</id>
-            <name>Appirio Maven Repository</name>
-            <url>file:///mnt/maven/repository</url>
-        </snapshotRepository>
+		<snapshotRepository>
+			<id>tcreposnap</id>
+			<url>s3://tc-mvn-repo/snapshot</url>
+		</snapshotRepository>
+		<repository>
+			<id>tcrepo</id>
+			<url>s3://tc-mvn-repo/release</url>
+		</repository>
     </distributionManagement>
 
     <repositories>
@@ -146,27 +144,40 @@
             <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
             <url>http://repository.springsource.com/maven/bundles/external</url>
         </repository>
-        <repository>
-            <id>Appirio Technology Maven Repository</id>
-            <url>http://maven.topcoder-dev.com:8080/</url>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-        </repository>
-	<repository>
-	    <id>temp-maven-repo</id>
-	    <url>https://github.com/appirio-tech/temp-maven-repo/raw/master</url>
-            <snapshots>
-	         <enabled>true</enabled>
-                 <updatePolicy>always</updatePolicy>
-	    </snapshots>
-	 </repository>
+	    <repository>
+	      <id>tcrepo</id>
+	      <url>s3://tc-mvn-repo/release</url>
+	      <snapshots>
+		<enabled>false</enabled>
+		<updatePolicy>always</updatePolicy>
+	      </snapshots>
+	      <releases>
+		<enabled>true</enabled>
+		<updatePolicy>always</updatePolicy>
+	      </releases>
+	    </repository>
+	    <repository>
+	      <id>tcreposnap</id>
+	      <url>s3://tc-mvn-repo/snapshot</url>
+	      <snapshots>
+		<enabled>true</enabled>
+		<updatePolicy>always</updatePolicy>
+	      </snapshots>
+	      <releases>
+		<enabled>false</enabled>
+		<updatePolicy>always</updatePolicy>
+	      </releases>
+	    </repository>
     </repositories>
 
     <build>
+	    <extensions>
+	      <extension>
+		<groupId>org.kuali.maven.wagons</groupId>
+		<artifactId>maven-s3-wagon</artifactId>
+		<version>1.2.1</version>
+	      </extension>
+	    </extensions>	    
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
