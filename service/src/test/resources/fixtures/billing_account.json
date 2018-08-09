@@ -1,0 +1,17 @@
+{
+	"id": 70015984,
+	"name": "Liquid (CA)",
+	"status": "Active",
+	"startDate": "2010-03-20T08:52Z",
+	"endDate": "2011-12-31T17:00Z",
+	"budgetAmount": 5000,
+	"salesTax": 0,
+	"poNumber": "Liquid PO 1",
+	"paymentTerms": null,
+	"description": "description",
+	"subscriptionNumber": "null",
+	"companyId": 1,
+	"manualPrizeSetting": 0,
+	"clientId": 70014096,
+	"billable": null
+}

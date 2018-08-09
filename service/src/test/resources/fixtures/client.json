@@ -1,0 +1,9 @@
+{
+	"id": 1,
+	"name": "ACME",
+	"status": "Active",
+	"startDate": "2018-04-28T07:24Z",
+	"endDate": "2019-12-31T17:00Z",
+	"codeName": "ACME",
+	"customerNumber": null
+}
