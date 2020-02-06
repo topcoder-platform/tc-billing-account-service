@@ -359,7 +359,6 @@ public class BillingAccountResource extends BaseResource {
 
 	@GET
 	@Path("billing-accounts/health")
-    @Timed
 	public ApiResponse healthcheck() throws Exception {
     	return ApiResponseFactory.createResponse("health is fine");
 	}    
