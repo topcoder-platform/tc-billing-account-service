@@ -17,30 +17,45 @@ install_awscli: &install_awscli
     sudo pip install awscli awsebcli --upgrade
     aws --version
     eb --version
-  
+
+install_dependency: &install_dependency
+  name: Installation of build and deployment dependencies.
+  command: |
+    sudo apt install jq
+    sudo pip install awscli --upgrade
+    sudo pip install docker-compose
+install_deploysuite: &install_deploysuite
+  name: Installation of install_deploysuite.
+  command: |
+    git clone --branch v1.4.2 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+    cp ./../buildscript/master_deploy.sh .
+    cp ./../buildscript/buildenv.sh .
+    cp ./../buildscript/awsconfiguration.sh .  
+
 # Instructions of deployment
 deploy_steps: &deploy_steps
   - checkout
   - attach_workspace:
       at: .
-  - run: *install_awscli
+  - run: *install_dependency
+  - run: *install_deploysuite
   - setup_remote_docker
-  - run: .deploy/ebs_deploy.sh tc-billing-account-service $DEPLOY_ENV $CIRCLE_BUILD_NUM
+  - run: docker build -t ${APPNAME}:latest .
+#  - run: .deploy/ebs_deploy.sh tc-billing-account-service $DEPLOY_ENV $CIRCLE_BUILD_NUM
+  - deploy:
+      name: Running MasterScript.
+      command: |
+        ./awsconfiguration.sh $DEPLOY_ENV
+        source awsenvconf
+        ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+        source buildenvvar
+        ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
 
 jobs:
   build:
     <<: *java_env
     steps:
       - checkout
-      - run:
-          name: Configuring maven
-          command: |
-            MVNSERVERSETTING='<server>\n  <id>tcrepo</id> \n <username>${env.MVNUSERNAME}</username> \n <password>${env.MVNPASSWD}</password> \n  </server> '
-            C=$(echo $MVNSERVERSETTING | sed 's/\//\\\//g')
-            sudo sed -i.bak "/<\/servers>/ s/.*/${C}\n&/" /opt/apache-maven/conf/settings.xml
-            MVNSERVERSETTING='<server>\n  <id>tcreposnap</id> \n <username>${env.MVNUSERNAME}</username> \n <password>${env.MVNPASSWD}</password> \n  </server> '
-            C=$(echo $MVNSERVERSETTING | sed 's/\//\\\//g')
-            sudo sed -i.bak "/<\/servers>/ s/.*/${C}\n&/" /opt/apache-maven/conf/settings.xml      
       - run: cd service && mvn clean package integration-test
       - persist_to_workspace:
           root: .
@@ -51,12 +66,16 @@ jobs:
     <<: *python_env
     environment:
       DEPLOY_ENV: "PROD"
+      LOGICAL_ENV: "prod"    
+      APPNAME: "tc-billing-account"       
     steps: *deploy_steps
 
   deploy_dev:
     <<: *python_env
     environment:
       DEPLOY_ENV: "DEV"
+      LOGICAL_ENV: "dev"    
+      APPNAME: "tc-billing-account"       
     steps: *deploy_steps
       
 
@@ -66,6 +85,7 @@ workflows:
     jobs:
       - build
       - deploy_dev:
+          context : org-global
           filters:
             branches:
               only: 
@@ -74,6 +94,7 @@ workflows:
           requires:
             - build
       - deploy_prod:
+          context : org-global
           filters:
             branches:
               only: master
