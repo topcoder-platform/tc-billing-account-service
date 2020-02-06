@@ -91,6 +91,7 @@ workflows:
               only: 
                 - dev
                 - dev-circleci2
+                - dev-ecs
           requires:
             - build
       - deploy_prod:
