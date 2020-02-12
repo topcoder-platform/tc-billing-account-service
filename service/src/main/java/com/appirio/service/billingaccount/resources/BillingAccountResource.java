@@ -357,6 +357,12 @@ public class BillingAccountResource extends BaseResource {
         }
     }
 
+	@GET
+	@Path("billing-accounts/health")
+	public ApiResponse healthcheck() throws Exception {
+    	return ApiResponseFactory.createResponse("health is fine");
+	}    
+
     /**
      * Get billing account by id. Can either be used to verify that an account exists or to get the original billing
      * account.
