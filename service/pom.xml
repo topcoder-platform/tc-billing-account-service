@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.19.0-GA</version>
+			<version>3.28.0-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
@@ -259,10 +259,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.appirio.service.billingaccount.BillingAccountServiceApplication</mainClass>
                                 </transformer>
                             </transformers>
