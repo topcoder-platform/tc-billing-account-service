@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>1.0.0</dropwizard.version>
 	    <powermock.version>1.5.4</powermock.version>
-        <jackson-version>2.7.3</jackson-version>
+        <jackson-version>2.9.0</jackson-version>
 	    <supply-library.version>1.0.22-SNAPSHOT</supply-library.version>
     </properties>
 
@@ -259,10 +259,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.appirio.service.billingaccount.BillingAccountServiceApplication</mainClass>
                                 </transformer>
                             </transformers>
