@@ -56,6 +56,7 @@ jobs:
     <<: *java_env
     steps:
       - checkout
+      - run: sudo sed -i '/<mirror>/,/<\/mirror>/d' /opt/apache-maven/conf/settings.xml
       - run: cd service && mvn clean package integration-test
       - persist_to_workspace:
           root: .
