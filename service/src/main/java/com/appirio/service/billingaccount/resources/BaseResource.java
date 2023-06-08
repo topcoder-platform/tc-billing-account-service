@@ -37,6 +37,10 @@ public class BaseResource {
      */
     static final String END_DATE = "endDate";
 
+    static final String READ_BILLING_ACCOUNT_SCOPE = "read:project-billing-account-details";
+
+    static final String WRITE_BILLING_ACCOUNT_SCOPE = "write:projects-billing-accounts";
+
     /**
      * Date formatter to parse the date filters
      */
@@ -48,8 +52,20 @@ public class BaseResource {
      * @param user
      *            The user to check if he is an administrator.
      */
-    protected void checkAdmin(AuthUser user) throws SupplyException {
-        if (!user.hasRole("administrator")) {
+    protected void checkAdmin(AuthUser user, String[] scopes) throws SupplyException {
+        boolean hasAccess = false;
+        if (user.hasRole("administrator")) {
+            hasAccess = true;
+        }
+        if (!hasAccess && scopes != null && user.isMachine()) {
+            for (String scope : scopes) {
+                if (user.getScope() != null && user.getScope().contains(scope)) {
+                    hasAccess = true;
+                    break;
+                }
+            }
+        }
+        if (!hasAccess) {
             throw new SupplyException("Only administrators can access this resource.", 403);
         }
     }

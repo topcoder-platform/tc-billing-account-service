@@ -8,7 +8,7 @@ java_env: &java_env
 # Python image to run aws utilities
 python_env: &python_env
   docker:
-    - image: circleci/python:2.7-stretch-browsers
+    - image: cimg/python:3.11.0-browsers
 
 # Instructions of installing aws utilities
 install_awscli: &install_awscli
@@ -21,13 +21,15 @@ install_awscli: &install_awscli
 install_dependency: &install_dependency
   name: Installation of build and deployment dependencies.
   command: |
+    sudo apt update
     sudo apt install jq
-    sudo pip install awscli --upgrade
-    sudo pip install docker-compose
+    sudo apt install python3-pip
+    sudo pip3 install awscli --upgrade
+    sudo pip3 install docker-compose
 install_deploysuite: &install_deploysuite
   name: Installation of install_deploysuite.
   command: |
-    git clone --branch v1.4.2 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+    git clone --branch v1.4.15 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
     cp ./../buildscript/master_deploy.sh .
     cp ./../buildscript/buildenv.sh .
     cp ./../buildscript/awsconfiguration.sh .  
@@ -54,9 +56,24 @@ deploy_steps: &deploy_steps
 jobs:
   build:
     <<: *java_env
+    environment:
+      BUILD_MAVEN_ENV: "DEV"    
     steps:
       - checkout
-      - run: cd service && mvn clean package integration-test
+      - run:
+         name: Installing AWS cli
+         command: |
+           sudo apt update
+           sudo apt install awscli
+      - run: *install_deploysuite                    
+      - run: sudo sed -i '/<mirror>/,/<\/mirror>/d' /opt/apache-maven/conf/settings.xml
+      - run: 
+         name: Compiling code
+         command: |
+           ./awsconfiguration.sh $BUILD_MAVEN_ENV  
+           source awsenvconf
+           cd service && mvn clean package integration-test
+           rm -rf awsenvconf
       - persist_to_workspace:
           root: .
           paths:
@@ -83,7 +100,8 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - build
+      - build:
+          context : org-global
       - deploy_dev:
           context : org-global
           filters:

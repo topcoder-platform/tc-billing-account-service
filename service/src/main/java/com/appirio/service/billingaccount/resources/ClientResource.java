@@ -82,7 +82,7 @@ public class ClientResource extends BaseResource {
         @QueryParam("sort") String sort) {
         logger.debug("findAllClients");
         try {
-            checkAdmin(user);
+            checkAdmin(user, null);
             prepareParameters(queryParameter, sort);
             return MetadataApiResponseFactory.createResponse(clientManager.findAllClients(queryParameter));
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class ClientResource extends BaseResource {
     public ApiResponse addNewClient(@Auth AuthUser user, @Valid PostPutRequest<SaveClientDTO> request) {
         logger.debug("addNewClient, request : " + request);
         try {
-            checkAdmin(user);
+            checkAdmin(user, null);
             if (request.getParam() == null) {
                 throw new IllegalArgumentException("Should provide client param");
             }
@@ -134,7 +134,7 @@ public class ClientResource extends BaseResource {
     public ApiResponse getClientById(@Auth AuthUser user, @PathParam("clientId") Long id) {
         logger.debug("getClientById, id : " + id);
         try {
-            checkAdmin(user);
+            checkAdmin(user, null);
             return ApiResponseFactory.createResponse(clientManager.getClientById(id));
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
@@ -157,7 +157,7 @@ public class ClientResource extends BaseResource {
             @Valid PostPutRequest<SaveClientDTO> request) {
         logger.debug("updateClient, id = " + id + ", request = " + request);
         try {
-            checkAdmin(user);
+            checkAdmin(user, null);
             if (request.getParam() == null) {
                 throw new IllegalArgumentException("Should provide client param");
             }
