@@ -100,7 +100,7 @@ public class BillingAccountResource extends BaseResource {
             @APIQueryParam(repClass = BillingAccount.class) QueryParameter queryParameter,
             @QueryParam("sort") String sort) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             prepareParameters(queryParameter, sort);
             return MetadataApiResponseFactory.createResponse(billingAccountManager
                     .searchBillingAccounts(queryParameter));
@@ -122,7 +122,7 @@ public class BillingAccountResource extends BaseResource {
     @Path("billing-accounts")
     public ApiResponse createBillingAccount(@Auth AuthUser user, @Valid PostPutRequest<BillingAccount> request) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
             String method = request.getMethod();
             checkMethod(method);
             if (method != null && Arrays.asList("put", "patch").contains(method.toLowerCase())) {
@@ -150,7 +150,7 @@ public class BillingAccountResource extends BaseResource {
     @Path("billing-accounts/{billingAccountId}")
     public ApiResponse getBillingAccountsById(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             List<BillingAccount> response = getBillingAccounts(billingAccountId);
             return ApiResponseFactory.createResponse(response.get(0));
         } catch (Exception e) {
@@ -174,7 +174,7 @@ public class BillingAccountResource extends BaseResource {
     public ApiResponse updateBillingAccount(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId,
             @Valid PostPutRequest<BillingAccount> request) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
             List<BillingAccount> originals = getBillingAccounts(billingAccountId);
             BillingAccount original = originals.get(0);
             // make sure to update the correct billing account
@@ -203,7 +203,7 @@ public class BillingAccountResource extends BaseResource {
         @APIQueryParam(repClass = BillingAccountUser.class) QueryParameter queryParameter,
         @QueryParam("sort") String sort) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             prepareParameters(queryParameter, sort);
             getBillingAccounts(billingAccountId);
             return MetadataApiResponseFactory.createResponse(billingAccountManager
@@ -229,7 +229,7 @@ public class BillingAccountResource extends BaseResource {
     public ApiResponse addUserToBillingAccount(@Auth AuthUser user,
             @PathParam("billingAccountId") Long billingAccountId, @Valid PostPutRequest<UserIdDTO> request) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
             getBillingAccounts(billingAccountId);
             return MetadataApiResponseFactory.createResponse(billingAccountManager.addUserToBillingAccount(user,
                     billingAccountId, request.getParam().getUserId()));
@@ -254,7 +254,7 @@ public class BillingAccountResource extends BaseResource {
     public ApiResponse createBillingAccountFees(@Auth AuthUser user,
             @PathParam("billingAccountId") Long billingAccountId, @Valid PostPutRequest<BillingAccountFees> request) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
             BillingAccountFees fees = this.billingAccountManager.createBillingAccountFees(
                     user, request.getParam(), billingAccountId);
             return MetadataApiResponseFactory.createResponse(fees);
@@ -277,7 +277,7 @@ public class BillingAccountResource extends BaseResource {
     public ApiResponse updateBillingAccountFees(@Auth AuthUser user,
             @PathParam("billingAccountId") Long billingAccountId, @Valid PostPutRequest<BillingAccountFees> request) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
             BillingAccountFees fees = this.billingAccountManager.updateBillingAccountFees(
                     user, request.getParam(), billingAccountId);
             return MetadataApiResponseFactory.createResponse(fees);
@@ -297,7 +297,7 @@ public class BillingAccountResource extends BaseResource {
     @Path("billing-accounts/{billingAccountId}/fees")
     public ApiResponse getBillingAccountFees(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             BillingAccountFees fees = this.billingAccountManager.getBillingAccountFees(billingAccountId);
             return MetadataApiResponseFactory.createResponse(fees);
         } catch (Exception e) {
@@ -321,7 +321,7 @@ public class BillingAccountResource extends BaseResource {
     public ApiResponse removeUserFromBillingAccount(@Auth AuthUser user,
             @PathParam("billingAccountId") Long billingAccountId, @PathParam("userId") Long userId) {
         try {
-            checkAdmin(user);
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
             getBillingAccounts(billingAccountId);
             billingAccountManager.removeUserFromBillingAccount(billingAccountId, userId);
             ApiResponse result = new ApiResponse();

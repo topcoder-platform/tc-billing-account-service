@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:8u102
 
 LABEL description="tc-billing-account"
 
