@@ -44,6 +44,17 @@ import java.util.Date;
 @AllArgsConstructor
 public class BillingAccount extends BaseModel {
 	/**
+	 * Constructor without Consumed and Locked Amount
+	 */
+	
+	public BillingAccount( Long id, String name, String status, Date startDate, Date endDate, Float budgetAmount, Float salesTax, String poNumber, PaymentTermsDTO paymentTerms,
+String description, String subscriptionNumber, Long companyId, Long manualPrizeSetting, Long clientId, Boolean billable)
+	{
+		this(id,  name,  status,  startDate,  endDate,  budgetAmount, 0.0F, 0.0F, salesTax,
+		poNumber,  paymentTerms, description,  subscriptionNumber,  companyId,  manualPrizeSetting,  clientId,  billable);
+	}
+
+	/**
 	 * PK of the billing account
 	 */
 	@Getter
@@ -87,6 +98,20 @@ public class BillingAccount extends BaseModel {
 	@Getter
 	@Setter
 	private Float budgetAmount;
+
+	/**
+	 * The available/remaining budget for this billing account.
+	 */
+	@Getter
+	@Setter
+	private Float consumedAmount;
+
+	/**
+	 * The total locked challenge budget for this billing account.
+	 */
+	@Getter
+	@Setter
+	private Float lockedAmount;
 
 	/**
 	 * The sales tax.
