@@ -16,22 +16,15 @@ import lombok.Setter;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConsumedAmountDTO {
+public class LockAmountDTO {
 
 	/**
 	 * The consume amount.
 	 */
     @Getter
     @Setter
-    private Float consumedAmount;
-    
-    
-    /**
-     * The tc unlock amount.
-     */
-    @Getter
-    @Setter
-    private Float unlockedAmount;
+    private Float lockAmount;
+
 
     /**
 	 * The challengeId : Required for publish message.
@@ -40,11 +33,4 @@ public class ConsumedAmountDTO {
     @Setter
     private String challengeId;
     
-    
-    /**
-     * The tc markup : Required for publish message.
-     */
-    @Getter
-    @Setter
-    private Float markup;
 }
