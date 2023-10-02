@@ -29,7 +29,7 @@ public class HarmonyPublisher implements PublisherConsumedAmount {
 					.withPayload(msg));
 
 		} catch (Exception e) {
-			logger.debug("Unable to send message to Harmony Publisher: " + msg);
+			logger.error("Unable to send message to Harmony Publisher: " + msg, e);
 		}
 	}
 }
