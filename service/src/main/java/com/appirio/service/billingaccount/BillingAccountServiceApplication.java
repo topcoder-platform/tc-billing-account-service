@@ -4,6 +4,7 @@
 package com.appirio.service.billingaccount;
 
 import com.appirio.service.BaseApplication;
+import com.appirio.service.billingaccount.api.HarmonyPublisher;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
 import com.appirio.service.billingaccount.dao.ClientDAO;
 import com.appirio.service.billingaccount.dao.SequenceDAO;
@@ -86,7 +87,8 @@ public class BillingAccountServiceApplication extends BaseApplication<BillingAcc
         		new BillingAccountManager(DAOFactory.getInstance().createDAO(BillingAccountDAO.class),
         				IdGenerator.getInstance("com.topcoder.timetracker.ProjectManager"),
         				IdGenerator.getInstance("com.topcoder.timetracker.user.User"),
-        				DAOFactory.getInstance().createDAO(SequenceDAO.class));
+        				DAOFactory.getInstance().createDAO(SequenceDAO.class),
+        				new HarmonyPublisher());
 
     	// initialize the client manager
         ClientManager clientManager = new ClientManager(DAOFactory.getInstance().createDAO(ClientDAO.class),
