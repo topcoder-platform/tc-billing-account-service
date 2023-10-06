@@ -14,8 +14,7 @@ import com.appirio.service.billingaccount.api.FloatDTO;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
 import com.appirio.service.billingaccount.dao.SequenceDAO;
 import com.appirio.service.billingaccount.dto.TCUserDTO;
-import com.appirio.service.billingaccount.api.PublisherConsumedAmount;
-import com.appirio.service.billingaccount.api.PublisherSQS;
+import com.appirio.service.billingaccount.api.HarmonyPublisher;
 import com.appirio.supply.SupplyException;
 import com.appirio.supply.dataaccess.QueryResult;
 import com.appirio.supply.dataaccess.db.IdGenerator;
@@ -96,6 +95,11 @@ public class BillingAccountManager extends BaseManager {
     private SequenceDAO sequenceDAO;
     
     /**
+     * The Harmony publisher.
+     */
+    private HarmonyPublisher harmonyPublisher;
+
+    /**
      * The cacheService to cache the data
      */
     private SimpleCacheService cacheService = new SimpleCacheService();
@@ -129,11 +133,13 @@ public class BillingAccountManager extends BaseManager {
      */
     public BillingAccountManager(BillingAccountDAO billingAccountDAO, IdGenerator billingAccountIdGenerator,
                                  IdGenerator userAccountIdGenerator,
-                                 SequenceDAO sequenceDAO) {
+                                 SequenceDAO sequenceDAO,
+                                 HarmonyPublisher harmonyPublisher) {
         this.billingAccountDAO = billingAccountDAO;
         this.billingAccountIdGenerator = billingAccountIdGenerator;
         this.userAccountIdGenerator = userAccountIdGenerator;
         this.sequenceDAO = sequenceDAO;
+        this.harmonyPublisher = harmonyPublisher;
     }
 
     /**
@@ -753,21 +759,20 @@ public class BillingAccountManager extends BaseManager {
         }
 
         JSONObject json = new JSONObject();
-        json.put("billingAccountId", billingAccountId);
-        json.put("actualSpent", requestedConsumeAmount);
-        json.put("challengeId", challengeId);
-        json.put("markup", markup);
-        /**
-        * Publish message JSON format:
-        * {
-        * "billingAccountId": id,
-        * "actualSpent": 200,
-        * "challengeId": uuid,
-        * "markup": 200,
-        * }
-        */
-        PublisherConsumedAmount sqsPublisher = new PublisherSQS();
-        sqsPublisher.publish(json.toString());
+        json.put("source", "tc-billing-account-service");
+        json.put("publisher", "tc-billing-account-service.api");
+        json.put("eventType", "challenge-ba-consumed");
+        json.put("payloadType", "challenge-ba-consumed");
+        json.put("payloadVersion", 1);
+
+        JSONObject payload = new JSONObject();
+        payload.put("billingAccountId", billingAccountId);
+        payload.put("actualSpent", requestedConsumeAmount);
+        payload.put("challengeId", challengeId);
+        payload.put("markup", markup);
+        json.put("payload", payload);
+
+        harmonyPublisher.publish(json.toString());
 
         return requestedConsumeAmount;
     }
