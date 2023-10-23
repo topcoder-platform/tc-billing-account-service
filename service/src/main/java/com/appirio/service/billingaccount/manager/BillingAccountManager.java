@@ -3,18 +3,28 @@
  */
 package com.appirio.service.billingaccount.manager;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.appirio.service.billingaccount.api.BillingAccount;
+import com.appirio.service.billingaccount.api.BillingAccountBudget;
 import com.appirio.service.billingaccount.api.BillingAccountFees;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
+import com.appirio.service.billingaccount.api.ChallengeBudget;
 import com.appirio.service.billingaccount.api.ChallengeFee;
 import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
 import com.appirio.service.billingaccount.api.ChallengeType;
-import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.api.FloatDTO;
+import com.appirio.service.billingaccount.api.HarmonyPublisher;
+import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
 import com.appirio.service.billingaccount.dao.SequenceDAO;
 import com.appirio.service.billingaccount.dto.TCUserDTO;
-import com.appirio.service.billingaccount.api.HarmonyPublisher;
 import com.appirio.supply.SupplyException;
 import com.appirio.supply.dataaccess.QueryResult;
 import com.appirio.supply.dataaccess.db.IdGenerator;
@@ -22,14 +32,6 @@ import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.FilterParameter;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.auth.AuthUser;
-
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Manager for billing account business logic
@@ -654,6 +656,38 @@ public class BillingAccountManager extends BaseManager {
         
         return types;
     }
+
+	/**
+	 * Populate challenge budgets.
+	 * 
+	 * @param ba The billing account
+	 * @return the billing account with challenge budgets
+	 */
+	public BillingAccountBudget populateChallengeBudgets(BillingAccount ba) {
+		BillingAccountBudget bab = new BillingAccountBudget(ba);
+
+		List<ChallengeBudget> challengeBudgets = this.billingAccountDAO.getProjectChallengeBudget(ba.getId());
+		bab.setChallengeBudgets(challengeBudgets);
+
+		Float sum = 0f;
+
+		if (challengeBudgets != null && !challengeBudgets.isEmpty()) {
+			for (ChallengeBudget cb : challengeBudgets) {
+				if (cb.getConsumedAmount() != null && cb.getConsumedAmount().compareTo(0f) != 0) {
+					sum = floatAdd(sum, cb.getConsumedAmount());
+				}
+				if (cb.getLockedAmount() != null && cb.getLockedAmount().compareTo(0f) != 0) {
+					sum = floatAdd(sum, cb.getLockedAmount());
+				}
+			}
+		}
+
+		if (ba.getBudgetAmount() != null) {
+			bab.setAvailableBudget(floatSubtract(ba.getBudgetAmount(), sum));
+		}
+
+		return bab;
+	}
 
     /**
      * Update locked amount for a Challenge of a BillingAccount"
