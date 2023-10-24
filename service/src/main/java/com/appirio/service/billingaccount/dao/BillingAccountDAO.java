@@ -5,6 +5,7 @@ package com.appirio.service.billingaccount.dao;
 
 import com.appirio.service.billingaccount.api.BillingAccount;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
+import com.appirio.service.billingaccount.api.ChallengeBudget;
 import com.appirio.service.billingaccount.api.ChallengeFee;
 import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
 import com.appirio.service.billingaccount.api.ChallengeType;
@@ -448,4 +449,12 @@ public interface BillingAccountDAO {
                                             @Bind("lockedAmount") float lockedAmount, 
                                             @Bind("consumedAmount") float consumedAmount);
 
+	/**
+	 * Get details of challenge budgets of project.
+	 * 
+	 * @param projectId the project ID
+	 * @return List of challenge budgets of the project
+	 */
+	@SqlQueryFile("sql/billing-account/budget-amount/get-budget-amounts.sql")
+	List<ChallengeBudget> getProjectChallengeBudget(@Bind("projectId") long projectId);
 }

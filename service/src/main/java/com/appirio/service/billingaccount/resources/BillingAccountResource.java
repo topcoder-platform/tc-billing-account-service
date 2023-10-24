@@ -154,7 +154,7 @@ public class BillingAccountResource extends BaseResource {
         try {
             checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             List<BillingAccount> response = getBillingAccounts(billingAccountId);
-            return ApiResponseFactory.createResponse(response.get(0));
+            return ApiResponseFactory.createResponse(billingAccountManager.populateChallengeBudgets(response.get(0)));
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
         }
