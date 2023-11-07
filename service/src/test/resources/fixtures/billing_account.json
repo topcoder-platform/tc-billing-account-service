@@ -5,8 +5,6 @@
 	"startDate": "2010-03-20T08:52Z",
 	"endDate": "2011-12-31T17:00Z",
 	"budgetAmount": 5000,
-	"consumedAmount":101,
-	"lockedAmount":201,
 	"salesTax": 0,
 	"poNumber": "Liquid PO 1",
 	"paymentTerms": null,
