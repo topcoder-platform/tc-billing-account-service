@@ -8,7 +8,6 @@ import com.appirio.service.billingaccount.api.BillingAccountFees;
 import com.appirio.service.billingaccount.api.BillingAccountUpdatedDTO;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
 import com.appirio.service.billingaccount.api.UserIdDTO;
-import com.appirio.service.billingaccount.api.ConsumedAmountDTO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
 import com.appirio.service.supply.resources.MetadataApiResponseFactory;
 import com.appirio.supply.ErrorHandler;
@@ -305,84 +304,6 @@ public class BillingAccountResource extends BaseResource {
             return ErrorHandler.handle(e, logger);
         }
     }
-    //SAROJ
-    /**
-     * Check Balance Amount.
-     * Check BillingAccount has availability to spend a given "amount"
-     *
-     * @param user
-     *            the currently logged in user
-     * @param queryParameter
-     *            the query parameters
-     * @param amount
-     *            the amount requested for locking from available budget ( budgetAmount - consumedAmount )
-     * @return the api response
-     */
-    
-    @GET
-    @Path("billing-accounts/{billingAccountId}/check-balance")
-    public ApiResponse checkBalanceFromBillingAccount(@Auth AuthUser user,
-            @PathParam("billingAccountId") Long billingAccountId,
-            @QueryParam("amount") Float amount) {
-        try {
-            checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
-            return MetadataApiResponseFactory.createResponse(billingAccountManager.checkBalance(billingAccountId, amount));// amount < availableAmount );
-        } catch (Exception e) {
-            return ErrorHandler.handle(e, logger);
-        }
-    }
-
-    /**
-     * Lock amount from the total BudgetAmount.
-     *
-     * @param user
-     *            the currently logged in user
-     * @param queryParameter
-     *            the query parameters
-     * @param lockAmount
-     *            the amount requested for locking from available budget ( availableAmount ) : Update the lockAmount
-     * @return the api response
-     */
-    //billing-accounts/{billingAccountId}/lock-amount
-    @PATCH
-    @Path("billing-accounts/{billingAccountId}/lock-amount")
-    public ApiResponse lockAmountFromBillingAccount(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId,
-            @Valid PostPutRequest<Float> lockAmount) {
-        try {
-            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
-            return MetadataApiResponseFactory.createResponse(billingAccountManager.lockAmount(billingAccountId, lockAmount.getParam()));
-        } catch (Exception e) {
-            return ErrorHandler.handle(e, logger);
-        }
-    }
-
-    /**
-     * Cosume amount from the availableAmount
-     *
-     * @param user
-     *            the currently logged in user
-     * @param queryParameter
-     *            the query parameters
-     * @param consumedAmount
-     *            the amount requested for being consumed from available budget: Update the availableAmount
-     * @return the api response
-     */
-    
-    @PATCH
-    @Path("billing-accounts/{billingAccountId}/consume-amount")
-    public ApiResponse consumeAmountFromBillingAccount(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId,
-            @Valid PostPutRequest<ConsumedAmountDTO> consumedAmountDTO) {
-        try {
-            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
-            return MetadataApiResponseFactory.createResponse(billingAccountManager.consumeAmount(billingAccountId, 
-                                                             consumedAmountDTO.getParam().getConsumedAmount(),
-                                                             consumedAmountDTO.getParam().getUnlockedAmount(),
-                                                             consumedAmountDTO.getParam().getChallengeId(),
-                                                             consumedAmountDTO.getParam().getMarkup()));
-        } catch (Exception e) {
-            return ErrorHandler.handle(e, logger);
-        }
-    }
 
     /**
      * Remove user from a billing account.
@@ -456,5 +377,4 @@ public class BillingAccountResource extends BaseResource {
         }
         return originals;
     }
-
 }

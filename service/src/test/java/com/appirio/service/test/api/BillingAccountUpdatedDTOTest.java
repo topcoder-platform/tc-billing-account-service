@@ -39,10 +39,10 @@ public class BillingAccountUpdatedDTOTest {
     @Test
     public void serializesToJSON() throws Exception {
         final BillingAccount original = new BillingAccount(2L, "Test Project 2", "Active", TestHelper.toDate(
-            "2018-04-28T07:24Z"), TestHelper.toDate("2019-12-31T17:00Z"), 5000F, 105F, 205F, 0F, "TESTPROJECT-02", null,
+            "2018-04-28T07:24Z"), TestHelper.toDate("2019-12-31T17:00Z"), 5000F, 0F, "TESTPROJECT-02", null,
             "description", "null", 1L, 0L, 2L, true);
         final BillingAccount updated = new BillingAccount(2L, "New billing account2", "Active", TestHelper.toDate(
-            "2017-04-01T09:00Z"), TestHelper.toDate("2017-05-20T09:00Z"), null, 106F, 206F, 1.6F, "New POOO", null,
+            "2017-04-01T09:00Z"), TestHelper.toDate("2017-05-20T09:00Z"), null, 1.6F, "New POOO", null,
             "The billing account description", "25", 1L, 1L, 1L, false);
 
         final BillingAccountUpdatedDTO billingAccountUpdatedDTO = new BillingAccountUpdatedDTO(original, updated);
@@ -62,10 +62,10 @@ public class BillingAccountUpdatedDTOTest {
     @Test
     public void deserializesFromJSON() throws Exception {
         final BillingAccount original = new BillingAccount(2L, "Test Project 2", "Active", TestHelper.toDate(
-            "2018-04-28T07:24Z"), TestHelper.toDate("2019-12-31T17:00Z"), 5000F, 105F, 205F, 0F, "TESTPROJECT-02", null,
+            "2018-04-28T07:24Z"), TestHelper.toDate("2019-12-31T17:00Z"), 5000F, 0F, "TESTPROJECT-02", null,
             "description", "null", 1L, 0L, 2L, true);
         final BillingAccount updated = new BillingAccount(2L, "New billing account2", "Active", TestHelper.toDate(
-            "2017-04-01T09:00Z"), TestHelper.toDate("2017-05-20T09:00Z"), null, 106F, 206F, 1.6F, "New POOO", null,
+            "2017-04-01T09:00Z"), TestHelper.toDate("2017-05-20T09:00Z"), null, 1.6F, "New POOO", null,
             "The billing account description", "25", 1L, 1L, 1L, false);
 
         final BillingAccountUpdatedDTO billingAccountUpdatedDTO = new BillingAccountUpdatedDTO();

@@ -38,7 +38,7 @@ public class BillingAccountTest {
     @Test
     public void serializesToJSON() throws Exception {
         final BillingAccount billingAccount = new BillingAccount(70015984L, "Liquid (CA)", "Active", TestHelper.toDate(
-            "2010-03-20T08:52Z"), TestHelper.toDate("2011-12-31T17:00Z"), 5000F, 101F, 201F, 0F, "Liquid PO 1", null, "description",
+            "2010-03-20T08:52Z"), TestHelper.toDate("2011-12-31T17:00Z"), 5000F, 0F, "Liquid PO 1", null, "description",
             "null", 1L, 0L, 70014096L, null);
 
         final String expected = MAPPER.writeValueAsString(MAPPER.readValue(FixtureHelpers.fixture(
@@ -62,8 +62,6 @@ public class BillingAccountTest {
         billingAccount.setStartDate(TestHelper.toDate("2010-03-20T08:52Z"));
         billingAccount.setEndDate(TestHelper.toDate("2011-12-31T17:00Z"));
         billingAccount.setBudgetAmount(5000F);
-        billingAccount.setConsumedAmount(101F);
-        billingAccount.setLockedAmount(201F);
         billingAccount.setSalesTax(0F);
         billingAccount.setPoNumber("Liquid PO 1");
         billingAccount.setPaymentTerms(null);
