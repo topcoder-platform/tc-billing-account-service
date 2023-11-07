@@ -388,4 +388,20 @@ public interface BillingAccountDAO {
      */
     @SqlUpdateFile("sql/billing-account/challenge-fees/delete-challenge-fee.sql")
     void deleteChallengeFee(@ApiQueryInput QueryParameter queryParameter);
+
+    /**
+     * update Locked amount from Billing account available amount
+     *
+     * @param queryParameter the queryParameter to use
+     */
+    @SqlUpdateFile("sql/billing-account/update-locked-amount.sql")
+    void updateLockedAmount(@Bind("project_id") long projectId, @Bind("requested_amount") float requestedAmount);
+
+    /**
+     * update consumed amount from Billing account available amount
+     *
+     * @param queryParameter the queryParameter to use
+     */
+    @SqlUpdateFile("sql/billing-account/update-consumed-amount.sql")
+    void updateConsumedAmount(@Bind("project_id") long projectId, @Bind("requested_amount") float requestedAmount, @Bind("unlock_amount") float unlockAmount);
 }

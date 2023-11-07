@@ -21,6 +21,7 @@ import com.appirio.tech.core.api.v3.request.FilterParameter;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.auth.AuthUser;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -96,6 +97,25 @@ public class BillingAccountManager extends BaseManager {
     private SimpleCacheService cacheService = new SimpleCacheService();
 
     /**
+     * Logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(BillingAccountManager.class);
+
+    /**
+     * Add two Float values with 2 decimal precision carefully
+     */
+    private static Float floatAdd(Float f1, Float f2) {
+		return Math.round((f1 * 100 + f2 * 100)) / 100f;
+	}
+
+    /**
+     * Subtract two Float values with 2 decimal precision carefully
+     */
+	private static Float floatSubtract(Float f1, Float f2) {
+		return Math.round((f1 * 100 - f2 * 100)) / 100f;
+	}
+
+    /**
      * Create BillingAccountManager
      *
      * @param billingAccountDAO the billingAccountDAO to use
@@ -158,7 +178,7 @@ public class BillingAccountManager extends BaseManager {
         validateClientId(billingAccount.getClientId());
 
         Long id = billingAccountIdGenerator.getNextId();
-        LoggerFactory.getLogger(BillingAccountManager.class).debug("Next ID: " + id);
+        logger.debug("Next ID: " + id);
         billingAccountDAO.createBillingAccount(id, billingAccount.getBudgetAmount(),
                 billingAccount.getName(), billingAccount.getPaymentTerms().getId(),
                 billingAccount.getStartDate(), billingAccount.getEndDate(), activeFlag, user.getUserId().toString(),
@@ -623,5 +643,86 @@ public class BillingAccountManager extends BaseManager {
         }
         
         return types;
+    }
+
+    /**
+     * Check BillingAccount has availability to spend a given "amount"
+     *
+     * @return the List<ChallengeType> result
+     */
+    public Boolean checkBalance(Long billingAccountId, Float requestedAmount)  throws SupplyException{
+        List<BillingAccount> originals = getBillingAccount(billingAccountId).getData();
+        if (originals.size() == 0) {
+            throw new SupplyException("Couldn't find billing account with id " + billingAccountId, 404);
+        }
+        BillingAccount billingAccount = originals.get(0);
+
+        Float consumedAmount = billingAccount.getConsumedAmount() == null ? 0 : billingAccount.getConsumedAmount();
+        Float budgetAmount = billingAccount.getBudgetAmount() == null ? 0 : billingAccount.getBudgetAmount();
+        Float lockedAmount = billingAccount.getLockedAmount() == null ? 0 : billingAccount.getLockedAmount();
+
+        Float availableAmount = floatSubtract(budgetAmount, consumedAmount);
+
+        Float totalLockingAmount = floatAdd(requestedAmount, lockedAmount);
+        logger.debug("Queried if "+requestedAmount +" can be locked. Result : "+(totalLockingAmount <= availableAmount));
+        return totalLockingAmount <= availableAmount;
+    }
+
+    /**
+     * Update locked amount for a BillingAccount"
+     *
+     * @return the updated lock Amount
+     */
+    public Float lockAmount(Long billingAccountId, Float requestedAmount)  throws SupplyException{
+        List<BillingAccount> originals = getBillingAccount(billingAccountId).getData();
+        if (originals.size() == 0) {
+            throw new SupplyException("Couldn't find billing account with id " + billingAccountId, 404);
+        }
+        BillingAccount billingAccount = originals.get(0);
+
+        Float consumedAmount = billingAccount.getConsumedAmount() == null ? 0 : billingAccount.getConsumedAmount();
+        Float budgetAmount = billingAccount.getBudgetAmount() == null ? 0 : billingAccount.getBudgetAmount();
+        Float lockedAmount = billingAccount.getLockedAmount() == null ? 0 : billingAccount.getLockedAmount();
+
+        Float availableAmount = floatSubtract(budgetAmount, consumedAmount);
+
+        Float totalLockingAmount = floatAdd(requestedAmount, lockedAmount);
+        if ( totalLockingAmount > availableAmount) {
+            throw new SupplyException("Insufficient available amount("+availableAmount+") for Billing Account:" + billingAccountId+
+                                      ". Requested lock amount:"+requestedAmount+"   Existing locked amount:"+lockedAmount, 404);
+        }
+        logger.debug("Updating LockedAmount : " + totalLockingAmount);
+        this.billingAccountDAO.updateLockedAmount(billingAccountId, requestedAmount);
+        return totalLockingAmount;
+    }
+    /**
+     * Update consumed amount for a BillingAccount and unlock the locked amount
+     *
+     * @return the updated consumed Amount
+     */
+    public Float consumeAmount(Long billingAccountId, Float requestedAmount, Float unlockAmount, String challengeId, Float markup)  throws SupplyException{
+        List<BillingAccount> originals = getBillingAccount(billingAccountId).getData();
+        if (originals.size() == 0) {
+            throw new SupplyException("Couldn't find billing account with id " + billingAccountId, 404);
+        }
+        BillingAccount billingAccount = originals.get(0);
+
+        Float consumedAmount = billingAccount.getConsumedAmount() == null ? 0 : billingAccount.getConsumedAmount();
+        Float budgetAmount = billingAccount.getBudgetAmount() == null ? 0 : billingAccount.getBudgetAmount();
+        Float lockedAmount = billingAccount.getLockedAmount() == null ? 0 : billingAccount.getLockedAmount();
+        Float totalconsumedAmount = floatAdd(requestedAmount, consumedAmount);
+
+        if ( budgetAmount < totalconsumedAmount ) {
+            logger.debug("Total Budget : " + budgetAmount+". Total ConsumedAmount : "+totalconsumedAmount);
+            throw new SupplyException("Unable to consume Amount("+requestedAmount+"), as Total Budget(" + budgetAmount+") is less. ConsumedAmount : "+consumedAmount, 404);
+        }
+        if ( lockedAmount < unlockAmount ) {
+            logger.debug("Total Locked Amount : " + lockedAmount + " is less than requested Unlock Amount : " + unlockAmount);
+            throw new SupplyException("Unable to Unlock Amount("+unlockAmount+"), as this is more than total LockedAmount : "+lockedAmount, 404);
+        }
+        logger.debug("Updating ConsumedAmount : " + totalconsumedAmount);
+        logger.debug("Updating LockedAmount : " + floatSubtract(lockedAmount, unlockAmount));
+        this.billingAccountDAO.updateConsumedAmount(billingAccountId, requestedAmount, unlockAmount);
+        return totalconsumedAmount;
     }
 }
