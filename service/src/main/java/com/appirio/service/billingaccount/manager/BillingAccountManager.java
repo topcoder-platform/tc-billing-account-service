@@ -811,4 +811,3 @@ public class BillingAccountManager extends BaseManager {
         return requestedConsumeAmount;
     }
 }
-
