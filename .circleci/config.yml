@@ -110,6 +110,7 @@ workflows:
                 - dev
                 - dev-circleci2
                 - dev-ecs
+                - ba-validation
           requires:
             - build
       - deploy_prod:

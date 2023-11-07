@@ -8,6 +8,8 @@ import com.appirio.service.billingaccount.api.BillingAccountFees;
 import com.appirio.service.billingaccount.api.BillingAccountUpdatedDTO;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
 import com.appirio.service.billingaccount.api.UserIdDTO;
+import com.appirio.service.billingaccount.api.ConsumeAmountDTO;
+import com.appirio.service.billingaccount.api.LockAmountDTO;
 import com.appirio.service.billingaccount.manager.BillingAccountManager;
 import com.appirio.service.supply.resources.MetadataApiResponseFactory;
 import com.appirio.supply.ErrorHandler;
@@ -152,7 +154,7 @@ public class BillingAccountResource extends BaseResource {
         try {
             checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             List<BillingAccount> response = getBillingAccounts(billingAccountId);
-            return ApiResponseFactory.createResponse(response.get(0));
+            return ApiResponseFactory.createResponse(billingAccountManager.populateChallengeBudgets(response.get(0)));
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
         }
@@ -300,6 +302,61 @@ public class BillingAccountResource extends BaseResource {
             checkAdmin(user, new String[] { READ_BILLING_ACCOUNT_SCOPE });
             BillingAccountFees fees = this.billingAccountManager.getBillingAccountFees(billingAccountId);
             return MetadataApiResponseFactory.createResponse(fees);
+        } catch (Exception e) {
+            return ErrorHandler.handle(e, logger);
+        }
+    }
+
+    /**
+     * Lock amount from the total BudgetAmount.
+     *
+     * @param user
+     *            the currently logged in user
+     * @param queryParameter
+     *            the query parameters
+     * @param lockAmount
+     *            the amount requested for locking from available budget ( availableAmount ) : Update the lockAmount
+     * @return the api response
+     */
+    //billing-accounts/{billingAccountId}/lock-amount
+    @PATCH
+    @Path("billing-accounts/{billingAccountId}/lock-amount")
+    public ApiResponse lockAmountFromBillingAccount(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId,
+            @Valid PostPutRequest<LockAmountDTO> lockAmountDTO) {
+        try {
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
+            return MetadataApiResponseFactory.createResponse(billingAccountManager.lockAmount(billingAccountId, 
+                                                             lockAmountDTO.getParam().getChallengeId(), 
+                                                             lockAmountDTO.getParam().getLockAmount()));
+        } catch (Exception e) {
+            return ErrorHandler.handle(e, logger);
+        }
+    }
+
+    /**
+     * Cosume amount from the availableAmount
+     *
+     * @param user
+     *            the currently logged in user
+     * @param queryParameter
+     *            the query parameters
+     * @param consumedAmountDTO
+     *            ConsumedAmount : Actual amount spent for a challange
+     *            ChallengeId : Challenge Id
+     *            MarkUp : mark up value
+     * @return the api response
+     */
+    
+    @PATCH
+    @Path("billing-accounts/{billingAccountId}/consume-amount")
+    public ApiResponse consumeAmountFromBillingAccount(@Auth AuthUser user, @PathParam("billingAccountId") Long billingAccountId,
+            @Valid PostPutRequest<ConsumeAmountDTO> consumeAmountDTO) {
+        try {
+            checkAdmin(user, new String[] { WRITE_BILLING_ACCOUNT_SCOPE });
+            return MetadataApiResponseFactory.createResponse(billingAccountManager.consumeAmount(billingAccountId, 
+                                                             consumeAmountDTO.getParam().getChallengeId(),
+                                                             consumeAmountDTO.getParam().getConsumeAmount(),
+                                                             consumeAmountDTO.getParam().getMarkup()));
         } catch (Exception e) {
             return ErrorHandler.handle(e, logger);
         }
