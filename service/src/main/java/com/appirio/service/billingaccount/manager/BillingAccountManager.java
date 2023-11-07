@@ -3,12 +3,24 @@
  */
 package com.appirio.service.billingaccount.manager;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.appirio.service.billingaccount.api.BillingAccount;
+import com.appirio.service.billingaccount.api.BillingAccountBudget;
 import com.appirio.service.billingaccount.api.BillingAccountFees;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
+import com.appirio.service.billingaccount.api.ChallengeBudget;
 import com.appirio.service.billingaccount.api.ChallengeFee;
 import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
 import com.appirio.service.billingaccount.api.ChallengeType;
+import com.appirio.service.billingaccount.api.FloatDTO;
+import com.appirio.service.billingaccount.api.HarmonyPublisher;
 import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.dao.BillingAccountDAO;
 import com.appirio.service.billingaccount.dao.SequenceDAO;
@@ -20,12 +32,6 @@ import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.FilterParameter;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.auth.AuthUser;
-
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Manager for billing account business logic
@@ -91,9 +97,33 @@ public class BillingAccountManager extends BaseManager {
     private SequenceDAO sequenceDAO;
     
     /**
+     * The Harmony publisher.
+     */
+    private HarmonyPublisher harmonyPublisher;
+
+    /**
      * The cacheService to cache the data
      */
     private SimpleCacheService cacheService = new SimpleCacheService();
+
+    /**
+     * Logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(BillingAccountManager.class);
+
+    /**
+     * Add two Float values with 2 decimal precision carefully
+     */
+    private static Float floatAdd(Float f1, Float f2) {
+		return Math.round((f1 * 100 + f2 * 100)) / 100f;
+	}
+
+    /**
+     * Subtract two Float values with 2 decimal precision carefully
+     */
+	private static Float floatSubtract(Float f1, Float f2) {
+		return Math.round((f1 * 100 - f2 * 100)) / 100f;
+	}
 
     /**
      * Create BillingAccountManager
@@ -105,11 +135,13 @@ public class BillingAccountManager extends BaseManager {
      */
     public BillingAccountManager(BillingAccountDAO billingAccountDAO, IdGenerator billingAccountIdGenerator,
                                  IdGenerator userAccountIdGenerator,
-                                 SequenceDAO sequenceDAO) {
+                                 SequenceDAO sequenceDAO,
+                                 HarmonyPublisher harmonyPublisher) {
         this.billingAccountDAO = billingAccountDAO;
         this.billingAccountIdGenerator = billingAccountIdGenerator;
         this.userAccountIdGenerator = userAccountIdGenerator;
         this.sequenceDAO = sequenceDAO;
+        this.harmonyPublisher = harmonyPublisher;
     }
 
     /**
@@ -158,7 +190,7 @@ public class BillingAccountManager extends BaseManager {
         validateClientId(billingAccount.getClientId());
 
         Long id = billingAccountIdGenerator.getNextId();
-        LoggerFactory.getLogger(BillingAccountManager.class).debug("Next ID: " + id);
+        logger.debug("Next ID: " + id);
         billingAccountDAO.createBillingAccount(id, billingAccount.getBudgetAmount(),
                 billingAccount.getName(), billingAccount.getPaymentTerms().getId(),
                 billingAccount.getStartDate(), billingAccount.getEndDate(), activeFlag, user.getUserId().toString(),
@@ -623,5 +655,159 @@ public class BillingAccountManager extends BaseManager {
         }
         
         return types;
+    }
+
+	/**
+	 * Populate challenge budgets.
+	 * 
+	 * @param ba The billing account
+	 * @return the billing account with challenge budgets
+	 */
+	public BillingAccountBudget populateChallengeBudgets(BillingAccount ba) {
+		BillingAccountBudget bab = new BillingAccountBudget(ba);
+
+		List<ChallengeBudget> challengeBudgets = this.billingAccountDAO.getProjectChallengeBudget(ba.getId());
+		bab.setChallengeBudgets(challengeBudgets);
+
+		Float sum = 0f;
+
+		if (challengeBudgets != null && !challengeBudgets.isEmpty()) {
+			for (ChallengeBudget cb : challengeBudgets) {
+				if (cb.getConsumedAmount() != null && cb.getConsumedAmount().compareTo(0f) != 0) {
+					sum = floatAdd(sum, cb.getConsumedAmount());
+				}
+				if (cb.getLockedAmount() != null && cb.getLockedAmount().compareTo(0f) != 0) {
+					sum = floatAdd(sum, cb.getLockedAmount());
+				}
+			}
+		}
+
+		if (ba.getBudgetAmount() != null) {
+			bab.setAvailableBudget(floatSubtract(ba.getBudgetAmount(), sum));
+		}
+
+		return bab;
+	}
+
+    /**
+     * Update locked amount for a Challenge of a BillingAccount"
+     *
+     * @return the updated lock Amount
+     */
+    public Float lockAmount(Long billingAccountId, String challengeId, Float requestedLockAmount)  throws SupplyException{
+        //Get the Billing Account
+        List<BillingAccount> originals = getBillingAccount(billingAccountId).getData();
+        if (originals.size() == 0) {
+            throw new SupplyException("Couldn't find billing account with id " + billingAccountId, 404);
+        }
+
+        BillingAccount billingAccount = originals.get(0);
+
+        //Get the Total budget available for the Billing account
+        Float budgetAmount = billingAccount.getBudgetAmount();
+        budgetAmount = budgetAmount == null ? 0 : budgetAmount;
+
+        IdDTO idDto = this.billingAccountDAO.countChallengeIdEntries(billingAccountId, challengeId);
+        Long countChallengeIdEntries = idDto == null ? 0 : idDto.getId();
+
+        FloatDTO floatDto = this.billingAccountDAO.getSumLockedConsumedAmount(billingAccountId, challengeId);
+        Float sumLockedConsumed = floatDto == null || floatDto.getFloatValue() == null ? 0 : floatDto.getFloatValue();
+        if(floatAdd(requestedLockAmount, sumLockedConsumed) > budgetAmount)
+        {
+            throw new SupplyException("Insufficient Budget amount ("+budgetAmount+") for Billing Account:" + billingAccountId+
+                                      ". Requested lock amount:"+requestedLockAmount+". Sum of all locked and consumed amount:"+sumLockedConsumed, 404);
+        }
+
+        //Find if there ia an existing entry for the Challenge: Update if exists; Insert if does not exists
+        if(countChallengeIdEntries == 0 )
+        {
+            //Insert and entry for a challaenge and billing account in table: project_challenge_budget
+            logger.debug("Creating new entry for Challenge:"+challengeId+" in Billing Account:"+billingAccountId+" with Consumed amount: 0 and lockedAmount as "+requestedLockAmount);
+            this.billingAccountDAO.createLockedAmount(billingAccountId, challengeId, requestedLockAmount, 0);
+        }
+        else if(countChallengeIdEntries == 1 )
+        {
+            //Update the entry for a challenge and billing account in table: project_challenge_budget
+            //TODO: We are setting consumedAmount to 0 ie overwriting existing value. Revisit: If it shows wiered behavior.
+            logger.debug("Updating entry for Challenge:"+challengeId+" in Billing Account:"+billingAccountId+" with Consumed amount: 0 and lockedAmount as "+requestedLockAmount);
+            this.billingAccountDAO.updateConsumedAmountForChallengeid(billingAccountId, challengeId, requestedLockAmount, 0);
+        }
+        else
+        {
+            //Exception
+            logger.debug("Multiple entries are found for Challenge:"+challengeId+" in Billing Account:"+billingAccountId);
+            throw new SupplyException("Multiple entries are found for Challenge:"+challengeId+" in Billing Account:"+billingAccountId, 404);
+        }
+        return requestedLockAmount;
+    }
+    /**
+     * Update consumed amount for a BillingAccount
+     *
+     * @return the updated consumed Amount
+     */
+    public Float consumeAmount(Long billingAccountId, String challengeId, Float requestedConsumeAmount, Float markup)  throws SupplyException{
+        //Get the Billing Account
+        List<BillingAccount> originals = getBillingAccount(billingAccountId).getData();
+        if (originals.size() == 0) {
+            throw new SupplyException("Couldn't find billing account with id " + billingAccountId, 404);
+        }
+
+        BillingAccount billingAccount = originals.get(0);
+
+        //Get the Total budget available for the Billing account
+        Float budgetAmount = billingAccount.getBudgetAmount();
+        budgetAmount = budgetAmount == null ? 0 : budgetAmount;
+
+        IdDTO idDto = this.billingAccountDAO.countChallengeIdEntries(billingAccountId, challengeId);
+        Long countChallengeIdEntries = idDto == null ? 0 : idDto.getId();
+
+        //The locked amount may not be actually used. On the other hand, consumed amount is the actually used amount.
+        //So, when a challenge completes and call consume api, we just check the actually amount, kinda of 
+        //loose the condition, and let that challenge finishes without problem.
+        FloatDTO floatDto = this.billingAccountDAO.getSumConsumedAmount(billingAccountId, challengeId);
+        Float sumConsumed = floatDto == null || floatDto.getFloatValue() == null ? 0 : floatDto.getFloatValue();
+        if(floatAdd(requestedConsumeAmount, sumConsumed) > budgetAmount)
+        {
+            throw new SupplyException("Insufficient Budget amount ("+budgetAmount+") for Billing Account:" + billingAccountId+
+                                      ". Requested consume amount:"+requestedConsumeAmount+". Sum of all consumed amount:"+sumConsumed, 404);
+        }
+
+        //Find if there ia an existing entry for the Challenge: Update if exists; Insert if does not exists
+        if(countChallengeIdEntries == 0 )
+        {
+            //Insert and entry for a challaenge and billing account in table: project_challenge_budget
+            logger.debug("Creating new entry for Challenge:"+challengeId+" in Billing Account:"+billingAccountId+" with Consumed amount:"+requestedConsumeAmount+" and lockedAmount as 0.");
+            this.billingAccountDAO.createLockedAmount(billingAccountId, challengeId, 0, requestedConsumeAmount);
+        }
+        else if(countChallengeIdEntries == 1 )
+        {
+            //Update the entry for a challenge and billing account in table: project_challenge_budget
+            logger.debug("Updating entry for Challenge:"+challengeId+" in Billing Account:"+billingAccountId+" with Consumed amount:"+requestedConsumeAmount+" and lockedAmount as 0.");
+            this.billingAccountDAO.updateConsumedAmountForChallengeid(billingAccountId, challengeId, 0, requestedConsumeAmount);
+        }
+        else
+        {
+            //Exception
+            logger.debug("Multiple entries are found for Challenge:"+challengeId+" in Billing Account:"+billingAccountId);
+            throw new SupplyException("Multiple entries are found for Challenge:"+challengeId+" in Billing Account:"+billingAccountId, 404);
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("source", "tc-billing-account-service");
+        json.put("publisher", "tc-billing-account-service.api");
+        json.put("eventType", "challenge-ba-consumed");
+        json.put("payloadType", "challenge-ba-consumed");
+        json.put("payloadVersion", 1);
+
+        JSONObject payload = new JSONObject();
+        payload.put("billingAccountId", billingAccountId);
+        payload.put("actualSpent", requestedConsumeAmount);
+        payload.put("challengeId", challengeId);
+        payload.put("markup", markup);
+        json.put("payload", payload);
+
+        harmonyPublisher.publish(json.toString());
+
+        return requestedConsumeAmount;
     }
 }

@@ -27,6 +27,7 @@ import com.appirio.service.billingaccount.api.BillingAccountUser;
 import com.appirio.service.billingaccount.api.ChallengeFee;
 import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
 import com.appirio.service.billingaccount.api.ChallengeType;
+import com.appirio.service.billingaccount.api.HarmonyPublisher;
 import com.appirio.service.billingaccount.api.IdDTO;
 import com.appirio.service.billingaccount.api.IdSequence;
 import com.appirio.service.billingaccount.api.PaymentTermsDTO;
@@ -80,10 +81,15 @@ public class BillingAccountManagerTest extends BaseTest {
     private SequenceDAO sequenceDAO = mock(SequenceDAO.class);
 
     /**
+     * The Harmony publisher used for testing.
+     */
+    private HarmonyPublisher publisher = mock(HarmonyPublisher.class);
+
+    /**
      * Manager being tested
      */
     private BillingAccountManager unit = new BillingAccountManager(billingAccountDAO, generator, generator,
-        sequenceDAO);
+        sequenceDAO, publisher);
 
     /**
      * Test BillingAccountManager.searchBillingAccounts to find all billing accounts in persistence.

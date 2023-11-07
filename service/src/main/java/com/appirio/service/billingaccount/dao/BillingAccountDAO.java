@@ -5,10 +5,12 @@ package com.appirio.service.billingaccount.dao;
 
 import com.appirio.service.billingaccount.api.BillingAccount;
 import com.appirio.service.billingaccount.api.BillingAccountUser;
+import com.appirio.service.billingaccount.api.ChallengeBudget;
 import com.appirio.service.billingaccount.api.ChallengeFee;
 import com.appirio.service.billingaccount.api.ChallengeFeePercentage;
 import com.appirio.service.billingaccount.api.ChallengeType;
 import com.appirio.service.billingaccount.api.IdDTO;
+import com.appirio.service.billingaccount.api.FloatDTO;
 import com.appirio.service.billingaccount.dto.TCUserDTO;
 import com.appirio.supply.dataaccess.ApiQueryInput;
 import com.appirio.supply.dataaccess.DatasourceName;
@@ -388,4 +390,71 @@ public interface BillingAccountDAO {
      */
     @SqlUpdateFile("sql/billing-account/challenge-fees/delete-challenge-fee.sql")
     void deleteChallengeFee(@ApiQueryInput QueryParameter queryParameter);
+
+    /**
+     * Count number of entries for a Challenge Id in a Project
+     *
+     * @param projectId : Refers to the Billing Account ID
+     * @param challengeId : Refers to the Challenge ID
+     * 
+     */
+    @SqlQueryFile("sql/billing-account/budget-amount/count-challengeid-entries.sql")
+    IdDTO countChallengeIdEntries(@Bind("projectId") long projectId, @Bind("challengeId") String challengeId);
+
+    /**
+     * Get sum of All Consumed Amount for a given Project ID excluding queried Challenge
+     *
+     * @param projectId : Refers to the Billing Account ID
+     * @param challengeId : Refers to the Challenge ID
+     * 
+     */
+    @SqlQueryFile("sql/billing-account/budget-amount/get-sum-consumed-amount.sql")
+    FloatDTO getSumConsumedAmount(@Bind("projectId") long projectId, @Bind("challengeId") String challengeId);
+
+    /**
+     * Get sum of All Consumed Amount for a given Project ID excluding queried Challenge + Locked amount of queried Challenge
+     *
+     * @param projectId : Refers to the Billing Account ID
+     * @param challengeId : Refers to the Challenge ID
+     * 
+     */
+    @SqlQueryFile("sql/billing-account/budget-amount/get-sum-locked-consumed-amount.sql")
+    FloatDTO getSumLockedConsumedAmount(@Bind("projectId") long projectId, @Bind("challengeId") String challengeId);
+
+    /**
+     * Create an entry with Consumed amount and Locked Amount for a Challenge in a Billing account
+     *
+     * @param projectId : Refers to the Billing Account ID
+     * @param challengeId : Refers to the Challenge ID
+     * @param lockedAmount : Refers to the amount to be locked for a Challenge Id of a Billing Account ID
+     * @param consumedAmount : Refers to the amount has been actual spent for a Challenge Id of a Billing Account ID
+     */
+    @SqlUpdateFile("sql/billing-account/budget-amount/create-locked-amount.sql")
+    void createLockedAmount(@Bind("projectId") long projectId, 
+                            @Bind("challengeId") String challengeId, 
+                            @Bind("lockedAmount") float lockedAmount, 
+                            @Bind("consumedAmount") float consumedAmount);
+
+    /**
+     * Update existing entry with Consumed amount and Locked Amount for a Challenge in a Billing account
+     *
+     * @param projectId : Refers to the Billing Account ID
+     * @param challengeId : Refers to the Challenge ID
+     * @param lockedAmount : Refers to the amount to be locked for a Challenge Id of a Billing Account ID
+     * @param consumedAmount : Refers to the amount has been actual spent for a Challenge Id of a Billing Account ID
+     */
+    @SqlUpdateFile("sql/billing-account/budget-amount/update-consumed-amount-for-challangeid.sql")
+    void updateConsumedAmountForChallengeid(@Bind("projectId") long projectId, 
+                                            @Bind("challengeId") String challengeId, 
+                                            @Bind("lockedAmount") float lockedAmount, 
+                                            @Bind("consumedAmount") float consumedAmount);
+
+	/**
+	 * Get details of challenge budgets of project.
+	 * 
+	 * @param projectId the project ID
+	 * @return List of challenge budgets of the project
+	 */
+	@SqlQueryFile("sql/billing-account/budget-amount/get-budget-amounts.sql")
+	List<ChallengeBudget> getProjectChallengeBudget(@Bind("projectId") long projectId);
 }
