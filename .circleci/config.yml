@@ -8,7 +8,7 @@ java_env: &java_env
 # Python image to run aws utilities
 python_env: &python_env
   docker:
-    - image: cimg/python:3.11.0-browsers
+    - image: circleci/python:2.7-stretch-browsers
 
 # Instructions of installing aws utilities
 install_awscli: &install_awscli
@@ -16,7 +16,7 @@ install_awscli: &install_awscli
   command: |
     sudo pip install awscli awsebcli --upgrade
     aws --version
-    eb --version
+    # eb --version
 
 install_dependency: &install_dependency
   name: Installation of build and deployment dependencies.
@@ -67,11 +67,9 @@ jobs:
       BUILD_MAVEN_ENV: "DEV"    
     steps:
       - checkout
-      - run:
-         name: Installing AWS cli
-         command: |
-           sudo apt update
-           sudo apt install awscli
+      - attach_workspace:
+          at: .
+      - run: *install_awscli
       - run: *install_deploysuite                    
       - run: sudo sed -i '/<mirror>/,/<\/mirror>/d' /opt/apache-maven/conf/settings.xml
       - run: 
