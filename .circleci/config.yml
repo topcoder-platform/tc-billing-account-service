@@ -14,7 +14,7 @@ python_env: &python_env
 install_awscli: &install_awscli
   name: "Install awscli"
   command: |
-    sudo pip install awscli awsebcli --upgrade
+    sudo pip install awscli --upgrade
     aws --version
     # eb --version
 
