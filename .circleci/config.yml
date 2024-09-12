@@ -59,15 +59,13 @@ jobs:
       BUILD_MAVEN_ENV: "DEV"    
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - run: sudo sed -i '/<mirror>/,/<\/mirror>/d' /opt/apache-maven/conf/settings.xml
       - run:
           name: updating and fetching AWS config
           command: |
             sudo apt update
             sudo apt install awscli 
       - run: *install_deploysuite                    
-      - run: sudo sed -i '/<mirror>/,/<\/mirror>/d' /opt/apache-maven/conf/settings.xml
       - run: 
          name: Compiling code
          command: |
