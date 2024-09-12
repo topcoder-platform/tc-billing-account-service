@@ -42,12 +42,19 @@ deploy_steps: &deploy_steps
   - run: *install_dependency
   - run: *install_deploysuite
   - setup_remote_docker
+  - run:
+      name: "configuring aws environment"
+      command: |
+        ./awsconfiguration.sh $DEPLOY_ENV
+  - run:
+      name: "Fetch configuration"
+      command: |
+        source awsenvconf
+        ./build-fetch-configuration.sh $DEPLOY_ENV
   - run: docker build -t ${APPNAME}:latest .
-#  - run: .deploy/ebs_deploy.sh tc-billing-account-service $DEPLOY_ENV $CIRCLE_BUILD_NUM
   - deploy:
       name: Running MasterScript.
       command: |
-        ./awsconfiguration.sh $DEPLOY_ENV
         source awsenvconf
         ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
         source buildenvvar
