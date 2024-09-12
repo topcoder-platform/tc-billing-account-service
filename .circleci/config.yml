@@ -18,14 +18,6 @@ install_awscli: &install_awscli
     aws --version
     # eb --version
 
-install_dependency: &install_dependency
-  name: Installation of build and deployment dependencies.
-  command: |
-    sudo apt update
-    sudo apt install jq
-    sudo apt install python3-pip
-    sudo pip3 install awscli --upgrade
-    sudo pip3 install docker-compose
 install_deploysuite: &install_deploysuite
   name: Installation of install_deploysuite.
   command: |
@@ -39,7 +31,7 @@ deploy_steps: &deploy_steps
   - checkout
   - attach_workspace:
       at: .
-  - run: *install_dependency
+  - run: *install_awscli
   - run: *install_deploysuite
   - setup_remote_docker
   - run:
