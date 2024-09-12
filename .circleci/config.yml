@@ -61,7 +61,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: *install_awscli
+      - run:
+          name: updating and fetching AWS config
+          command: |
+            sudo apt update
+            sudo apt install awscli 
       - run: *install_deploysuite                    
       - run: sudo sed -i '/<mirror>/,/<\/mirror>/d' /opt/apache-maven/conf/settings.xml
       - run: 
