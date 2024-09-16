@@ -42,7 +42,6 @@ deploy_steps: &deploy_steps
       name: "Fetch configuration"
       command: |
         source awsenvconf
-        ./build-fetch-configuration.sh $DEPLOY_ENV
   - run: docker build -t ${APPNAME}:latest .
   - deploy:
       name: Running MasterScript.
