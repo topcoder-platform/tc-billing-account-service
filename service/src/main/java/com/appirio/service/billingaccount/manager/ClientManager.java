@@ -123,8 +123,9 @@ public class ClientManager extends BaseManager {
         } else {
             // validate if the provided client name is unique in the persistence.
             Client clientWithInputName = clientDAO.getClientByName(clientDTO.getName());
-            System.out.println("ClientDTO name: " + clientDTO.getName() + "clientWithInputNameID: " + clientWithInputName.getId() + "existingClient.getId: " +  existingClient.getId());
             if (clientWithInputName != null && clientWithInputName.getId() != existingClient.getId()) {
+                System.out.println("ClientDTO name: " + clientDTO.getName() + "clientWithInputNameID: " + clientWithInputName.getId() + "existingClient.getId: " +  existingClient.getId());
+
                 // There is another client different than the client to update which have the new specified name
                 throw new IllegalArgumentException(String.format("The client name '%s' already exists",
                         clientDTO.getName()));
