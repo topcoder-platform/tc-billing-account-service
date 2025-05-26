@@ -90,11 +90,10 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.informix.jdbc</groupId>
-            <artifactId>com.springsource.com.informix.jdbc</artifactId>
-            <version>3.0.0.JC3</version>
-        </dependency>
-        <dependency>
+  			<groupId>com.springsource.com.informix.jdbc</groupId>
+  			<artifactId>ibm-informix-jdbc-driver</artifactId>
+  			<version>3.0.0.JC3</version>
+  		</dependency>        <dependency>
             <groupId>appirio.platform</groupId>
             <artifactId>supply-library</artifactId>
             <version>${supply-library.version}</version>
@@ -155,7 +154,10 @@
             <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
             <url>https://repository.springsource.com/maven/bundles/release</url>
         </repository>
-
+		<repository>
+			<id>fran_aquino-riXos</id>
+			<url>https://packagecloud.io/fran_aquino/riXos/maven2</url>
+		</repository>
         <repository>
             <id>com.springsource.repository.bundles.external</id>
             <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
