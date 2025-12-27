@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>1.0.0</dropwizard.version>
 	    <powermock.version>1.5.4</powermock.version>
-        <jackson-version>2.7.3</jackson-version>
+        <jackson-version>2.12.1</jackson-version>
 	    <supply-library.version>1.0.22-SNAPSHOT</supply-library.version>
     </properties>
 
